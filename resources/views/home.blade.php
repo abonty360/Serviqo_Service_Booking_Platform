@@ -29,10 +29,75 @@
             <a href="#" class="hover:text-green-600 transition">Become a Pro</a>
         </div>
         <div class="flex space-x-4">
-            <button class="px-5 py-2 text-green-600 font-semibold hover:bg-green-50 rounded-lg transition">Login</button>
+            <button onclick="toggleModal('loginModal')" class="px-5 py-2 text-green-600 font-semibold hover:bg-green-50 rounded-lg transition">Login</button>
             <button class="px-5 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 shadow-md transition">Sign Up</button>
         </div>
     </nav>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75" aria-hidden="true" onclick="toggleModal('loginModal')"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-green-100">
+                <div class="bg-white px-8 pt-10 pb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-user-lock text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900" id="modal-title">Welcome Back</h3>
+                        <p class="text-gray-500 mt-2">Login to manage your bookings</p>
+                    </div>
+
+                    <form action="/" method="GET" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <input type="email" required class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition" placeholder="name@example.com">
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="block text-sm font-semibold text-gray-700">Password</label>
+                                <a href="#" class="text-sm font-medium text-green-600 hover:text-green-700">Forgot password?</a>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <input type="password" required class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition" placeholder="••••••••">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                            <label class="ml-2 block text-sm text-gray-700">Remember me</label>
+                        </div>
+
+                        <button type="submit" class="w-full py-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 shadow-lg shadow-green-200 transition-all transform hover:-translate-y-0.5">
+                            Sign In
+                        </button>
+                    </form>
+
+                    <div class="mt-8 text-center border-t border-gray-100 pt-6">
+                        <p class="text-gray-600">Don't have an account? 
+                            <a href="#" class="font-bold text-green-600 hover:text-green-700">Create Account</a>
+                        </p>
+                    </div>
+                </div>
+                <button onclick="toggleModal('loginModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <header class="relative bg-gradient-to-br from-green-50 to-white py-20 lg:py-32 overflow-hidden">
@@ -233,6 +298,87 @@
         </div>
     </section>
 
+    <!-- Testimonials Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">What Our Customers Say</h2>
+                <p class="text-gray-600">Hear from our satisfied users about their experiences</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-green-50 p-8 rounded-3xl relative">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="text-green-500 text-4xl"><i class="fas fa-quote-left"></i></div>
+                        <div class="flex text-yellow-400 text-sm">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic mb-8 leading-relaxed">
+                        “Amazing service! The cleaner was professional and thorough. My home has never looked better.”
+                    </p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center text-green-700 font-bold mr-4">SJ</div>
+                        <div>
+                            <h4 class="font-bold text-gray-900">Sarah Johnson</h4>
+                            <p class="text-sm text-green-600">Deep Cleaning</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Testimonial 2 -->
+                <div class="bg-green-50 p-8 rounded-3xl relative">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="text-green-500 text-4xl"><i class="fas fa-quote-left"></i></div>
+                        <div class="flex text-yellow-400 text-sm">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic mb-8 leading-relaxed">
+                        “Quick response and excellent work. Fixed my AC within an hour. Highly recommend!”
+                    </p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center text-green-700 font-bold mr-4">MC</div>
+                        <div>
+                            <h4 class="font-bold text-gray-900">Michael Chen</h4>
+                            <p class="text-sm text-green-600">AC Repair</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Testimonial 3 -->
+                <div class="bg-green-50 p-8 rounded-3xl relative">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="text-green-500 text-4xl"><i class="fas fa-quote-left"></i></div>
+                        <div class="flex text-yellow-400 text-sm">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic mb-8 leading-relaxed">
+                        “The salon service at home was incredible. Saved so much time and the results were perfect.”
+                    </p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center text-green-700 font-bold mr-4">ER</div>
+                        <div>
+                            <h4 class="font-bold text-gray-900">Emily Rodriguez</h4>
+                            <p class="text-sm text-green-600">Beauty Services</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-12">
         <div class="container mx-auto px-6">
@@ -259,5 +405,17 @@
         </div>
     </footer>
 
+    <script>
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        }
+    </script>
 </body>
 </html>
