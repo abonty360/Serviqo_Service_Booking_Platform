@@ -16,3 +16,24 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('home');
 });
+
+// Authentication Routes for separate pages
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
+Route::post('/login', function () {
+    // Handle login logic here
+    // For now, just redirect to home page after "successful" login
+    return redirect('/');
+});
+
+Route::get('/signup', function () {
+    return view('auth.signup');
+})->name('signup');
+
+Route::post('/signup', function () {
+    // Handle registration logic here
+    // Redirect to login with success message after successful signup
+    return redirect()->route('login', ['signup' => 'success']);
+});
