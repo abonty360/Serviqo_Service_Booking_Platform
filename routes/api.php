@@ -3,6 +3,8 @@
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Authcontroller;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,3 +28,12 @@ Route::post('/items', [UsersController::class, 'store']);
 Route::put('/items/{id}', [UsersController::class, 'update']);
 Route::patch('/items/{id}', [UsersController::class, 'patch']);
 Route::delete('/items/{id}', [UsersController::class, 'destroy']);
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::get('/me', [AuthController::class, 'me']);
+});
