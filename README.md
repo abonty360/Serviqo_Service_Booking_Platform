@@ -33,14 +33,17 @@ The primary goal of this project is to simplify service discovery, reduce manual
 - *Laravel*
  
 #### Frontend  
-- *React.js*
-- *Tailwind CSS/Bootstrap*  
+- *Laravel Blade* (templating)
+- *Tailwind CSS* (styling)
+- *Font Awesome* (icons)
+- *Vanilla JavaScript* (logic)
+- *Vite* (asset bundling)
 
 #### Database
-- *MySQL database*
+- *MsSQL database*
   
 #### Rendering Method  
-- *Client-Side Rendering (CSR)*
+- *API*
 
 ---
 
@@ -67,13 +70,12 @@ The primary goal of this project is to simplify service discovery, reduce manual
 
 #### Authentication
 - *JWT-based secure authentication* for session management  
-- *Role-based login* for customers, service providers, and administrators 
 
 #### CRUD Operations
-- User Management: Create, view, update, and delete user profiles
+- User Management: Create, view and update user profiles
 - Service Listings: Full CRUD operations for services and pricing
-- Bookings: Create, view, update, cancel, and track service orders
-- Reviews & Ratings: Create, view, and update feedback
+- Bookings: Create and view service orders
+- Reviews & Ratings: Give feedback
 
 ---
 
@@ -94,19 +96,17 @@ The primary goal of this project is to simplify service discovery, reduce manual
 - Laravel and React project initialization
 - Database schema design
 - JWT authentication implementation
-- Role-based access control
 - Basic UI layout setup
 
 #### Milestone 2: Core Booking System
 - Service category and listing management
 - Location-based filtering and search
 - Booking and scheduling system
-- User dashboard
-- Frontend
+- Profile settings implementation
 
 #### Milestone 3: Finalization & Enhancements
 - Rating and review system
-- Order tracking and notifications
+- Order notifications
 - UI/UX improvements
 - Testing and deployment
 
