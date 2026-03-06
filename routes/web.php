@@ -23,9 +23,8 @@ Route::get('/login', function () {
 })->name('login');
 
 Route::post('/login', function () {
-    // Handle login logic here
-    // For now, just redirect to home page after "successful" login with a 'logged_in' flash message
-    return redirect('/')->with('logged_in', true);
+    session(['logged_in' => true, 'is_guest' => false]);
+    return redirect('/');
 });
 
 Route::get('/signup', function () {
@@ -36,4 +35,14 @@ Route::post('/signup', function () {
     // Handle registration logic here
     // Redirect to login with success message after successful signup
     return redirect()->route('login', ['signup' => 'success']);
+});
+
+Route::get('/guest', function () {
+    session(['is_guest' => true]);
+    return redirect('/');
+});
+
+Route::get('/logout', function () {
+    session()->flush();
+    return redirect('/');
 });
