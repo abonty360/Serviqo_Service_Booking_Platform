@@ -26,7 +26,6 @@
         <div class="hidden md:flex ml-auto space-x-10 font-medium text-gray-600">
             <a href="#" class="hover:text-green-600 transition">Services</a>
             <a href="#" class="hover:text-green-600 transition">How it Works</a>
-            <a href="#" class="hover:text-green-600 transition">Become a Pro</a>
         </div>
         <div class="flex space-x-4">
             @if (session('logged_in'))
