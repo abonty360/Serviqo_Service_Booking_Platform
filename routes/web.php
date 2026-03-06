@@ -46,3 +46,10 @@ Route::get('/logout', function () {
     session()->flush();
     return redirect('/');
 });
+
+Route::get('/profile', function () {
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+    return view('profile');
+});

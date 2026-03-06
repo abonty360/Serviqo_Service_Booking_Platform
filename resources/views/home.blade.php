@@ -27,12 +27,14 @@
             <a href="#" class="hover:text-green-600 transition">Services</a>
             <a href="#" class="hover:text-green-600 transition">How it Works</a>
         </div>
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-4 ml-6">
             @if (session('logged_in'))
                 <a href="/profile" class="px-7 py-2 text-green-600 font-semibold hover:bg-green-50 rounded-lg transition flex items-center">
                     <i class="fas fa-user-circle text-xl mr-2"></i> User
                 </a>
-                <a href="/logout" class="text-sm font-medium text-gray-500 hover:text-red-500 transition-colors">Logout</a>
+                <a href="/logout" class="text-sm font-medium text-gray-500 hover:text-red-500 transition-colors flex items-center">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                </a>
             @elseif (session('is_guest'))
                 {{-- No buttons shown for guest users --}}
             @else
