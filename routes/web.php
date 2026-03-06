@@ -35,9 +35,6 @@ Route::get('/guest', function () {
 });
 
 Route::get('/profile', function () {
-    if (!session('logged_in')) {
-        return redirect('/login');
-    }
     return view('profile');
 });
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');

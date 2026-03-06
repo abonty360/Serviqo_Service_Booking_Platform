@@ -21,3 +21,7 @@ Route::middleware('auth:api')->get('/profile', function () {
 Route::group(['middleware'=>'auth:api'], function(){
     Route::post('/logout',[AuthController::class,'logout']);
 });
+
+Route::middleware('auth:api')->get('/me', function () {
+    return response()->json(auth('api')->user());
+});
