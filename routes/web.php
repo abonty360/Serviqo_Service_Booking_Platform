@@ -29,4 +29,16 @@ Route::get('/signup', function () {
 })->name('signup');
 Route::post('/signup', [AuthController::class, 'register'])->name('customer.register');
 
+Route::get('/guest', function () {
+    session(['is_guest' => true]);
+    return redirect('/');
+});
+
+Route::get('/profile', function () {
+    if (!session('logged_in')) {
+        return redirect('/login');
+    }
+    return view('profile');
+});
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
+
