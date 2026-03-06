@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,33 +18,19 @@ Route::get('/', function () {
     return view('home');
 });
 
-// Authentication Routes for separate pages
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
 
-Route::post('/login', function () {
-    session(['logged_in' => true, 'is_guest' => false]);
-    return redirect('/');
-});
+Route::post('/login', [AuthController::class, 'login'])->name('customer.login');
 
 Route::get('/signup', function () {
     return view('auth.signup');
 })->name('signup');
-
-Route::post('/signup', function () {
-    // Handle registration logic here
-    // Redirect to login with success message after successful signup
-    return redirect()->route('login', ['signup' => 'success']);
-});
+Route::post('/signup', [AuthController::class, 'register'])->name('customer.register');
 
 Route::get('/guest', function () {
     session(['is_guest' => true]);
-    return redirect('/');
-});
-
-Route::get('/logout', function () {
-    session()->flush();
     return redirect('/');
 });
 
@@ -53,3 +40,5 @@ Route::get('/profile', function () {
     }
     return view('profile');
 });
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
+
