@@ -36,12 +36,19 @@ class AuthController extends Controller
                 'fname' => 'required|string|max:255',
                 'lname' => 'required|string|max:255',
                 'dob' => 'required|date',
-                'email' => 'required|email|unique:customers,email',
+                'email' => [
+                    'required',
+                    'email',
+                    'unique:customers,email',
+                    'regex:/^[^@]+@[^@]+\.(com|org|net|edu|co|io|gov)$/i'
+                ],
                 'phone' => 'nullable|string',
                 'password' => 'bail|required|min:6|confirmed',
                 'address' => 'nullable|string',
                 'city' => 'required|in:Dhaka,Chittagong,Sylhet,Barisal,Rangpur,Rajshahi,Khulna',
                 'region' => 'required|string'
+            ], [
+                'email.regex' => 'Email must end with a valid domain'
             ]);
 
             Customer::create([
