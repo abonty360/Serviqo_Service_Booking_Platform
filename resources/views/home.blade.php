@@ -17,73 +17,7 @@
 
 <body class="bg-white text-gray-800">
 
-    <!-- Navigation -->
-    <nav class="flex items-center justify-between px-8 py-4 bg-white border-b sticky top-0 z-50">
-        <div class="flex items-center space-x-2">
-            <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                <i class="fas fa-tools text-white text-xl"></i>
-            </div>
-            <span class="text-2xl font-bold text-gray-900 tracking-tight">Serviqo</span>
-        </div>
-        <div class="hidden md:flex ml-auto space-x-10 font-medium text-gray-600">
-            <a href="#" class="hover:text-green-600 transition">Services</a>
-            <a href="#" class="hover:text-green-600 transition">How it Works</a>
-        </div>
-        <div class="flex space-x-4" id="authButtons"></div>
-    </nav>
-    <script>
-
-        function renderNavbar() {
-
-            const token = localStorage.getItem("token");
-            const container = document.getElementById("authButtons");
-
-            if (token) {
-
-                container.innerHTML = `
-            <a href="/profile" class="px-7 py-2 text-green-600 font-semibold hover:bg-green-50 rounded-lg transition">
-                <i class="fas fa-user-circle text-xl"></i> Profile
-            </a>
-
-            <button id="logoutBtn" class="px-7 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition">
-                Logout
-            </button>
-        `;
-
-                document.getElementById("logoutBtn").addEventListener("click", logoutUser);
-
-            } else {
-
-                container.innerHTML = `
-            <a href="/login" class="px-7 py-2 text-green-600 font-semibold hover:bg-green-50 rounded-lg transition">Login</a>
-
-            <a href="/signup" class="px-7 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 shadow-md transition">
-                Sign Up
-            </a>
-        `;
-            }
-        }
-
-        async function logoutUser() {
-
-            const token = localStorage.getItem("token");
-
-            await fetch("/api/logout", {
-                method: "POST",
-                headers: {
-                    "Authorization": "Bearer " + token,
-                    "Content-Type": "application/json"
-                }
-            });
-
-            localStorage.removeItem("token");
-            window.location.href = "/login";
-        }
-
-        renderNavbar();
-
-    </script>
-
+@include('components.navbar')
     <!-- Hero Section -->
     <header class="relative bg-gradient-to-br from-green-50 to-white py-20 lg:py-32 overflow-hidden">
         <div class="container mx-auto px-6 relative z-10">

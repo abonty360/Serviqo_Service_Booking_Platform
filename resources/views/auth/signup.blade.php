@@ -124,14 +124,17 @@
 
                     <!-- Custom Region Dropdown -->
                     <div class="relative dropdown-container" id="regionContainer">
-                        <button type="button" id="regionButton" class="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition bg-white text-gray-700 text-left flex items-center justify-between">
+                        <button type="button" id="regionButton"
+                            class="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition bg-white text-gray-700 text-left flex items-center justify-between">
                             <span id="regionLabel">Select Region</span>
                             <i class="fas fa-chevron-down text-xs text-gray-400"></i>
                         </button>
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none">
+                        <span
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none">
                             <i class="fas fa-globe"></i>
                         </span>
-                        <div id="regionMenu" class="hidden absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-xl max-h-60 overflow-y-auto">
+                        <div id="regionMenu"
+                            class="hidden absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-xl max-h-60 overflow-y-auto">
                             <div id="regionOptionsList" class="p-1">
                                 <div class="px-4 py-2 text-gray-400 text-sm">Please select a division first</div>
                             </div>
@@ -170,7 +173,7 @@
                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                                 <i class="fas fa-lock"></i>
                             </span>
-                            <input type="password" id="regConfirmPassword" required
+                            <input type="password" name="password_confirmation" id="regConfirmPassword" required
                                 class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
                                 placeholder="Confirm Password">
                         </div>
@@ -186,7 +189,7 @@
             </form>
 
             <div class="mt-4 text-center border-t border-gray-100 pt-4">
-                <p class="text-gray-600">Already have an account? 
+                <p class="text-gray-600">Already have an account?
                     <a href="/login" class="font-bold text-green-600 hover:text-green-700">Login Now</a>
                 </p>
                 <div class="mt-4">
@@ -200,12 +203,12 @@
 
     <script>
         const regionData = {
-            'Dhaka': ['Mirpur', 'Dhanmondi', 'Uttara', 'Gulshan','Banani','Mohammadpur', 'Tejgaon', 'Motijheel', 'Paltan', 'Savar', 'Keraniganj', 'Dohar'],
+            'Dhaka': ['Mirpur', 'Dhanmondi', 'Uttara', 'Gulshan', 'Banani', 'Mohammadpur', 'Tejgaon', 'Motijheel', 'Paltan', 'Savar', 'Keraniganj', 'Dohar'],
             'Chittagong': ["Cox's Bazar", 'Panchlaish', 'Halishahar', 'Pahartali', 'Chandgaon', 'Sitakunda', 'Rangunia', 'Sandwip', 'Mirsharai', 'Boalkhali'],
             'Sylhet': ['Zindabazar', 'Amberkhana', 'Tilagor', 'Noyashahar', 'Kumarpara', 'Moglabazar', 'Gowainghat', 'Beanibazar', 'Balaganj', 'Fenchuganj'],
-            'Barisal': ['Sadatpur', 'Amtali','Agailjhara', 'Babuganj', 'Bakerganj', 'Banaripara', 'Gournadi', 'Hizla', 'Mehendiganj', 'Muladi', 'Wazirpur'],
+            'Barisal': ['Sadatpur', 'Amtali', 'Agailjhara', 'Babuganj', 'Bakerganj', 'Banaripara', 'Gournadi', 'Hizla', 'Mehendiganj', 'Muladi', 'Wazirpur'],
             'Rangpur': ['Modern More', 'Kaunia', 'Gangachara', 'Pirgachha', 'Badarganj', 'Mithapukur', 'Pirganj', 'Rangpur Sadar', 'Taraganj', 'Pirgachha'],
-            'Rajshahi': ['Motihar', 'Boalia','Paba', 'Durgapur', 'Bagha', 'Bagmara', 'Charghat', 'Godagari', 'Tanore', 'Puthia', 'Mohonpur'],
+            'Rajshahi': ['Motihar', 'Boalia', 'Paba', 'Durgapur', 'Bagha', 'Bagmara', 'Charghat', 'Godagari', 'Tanore', 'Puthia', 'Mohonpur'],
             'Khulna': ['Boyra', 'Khalishpur', 'Sonadanga', 'Daulatpur', 'Dumuria', 'Dighalia', 'Batiaghata', 'Phultala', 'Rupsha', 'Terokhada', 'Paikgachha']
         };
 
@@ -244,22 +247,28 @@
         });
 
         // Initialize Division Dropdown
-        setupDropdown('divisionButton', 'divisionMenu', 'divisionLabel', 'divisionInput', 'division-option', (division) => {
-            // Update Region Dropdown
+        const divisionSelect = document.querySelector('select[name="city"]');
+
+        divisionSelect.addEventListener('change', function () {
+
+            const division = this.value;
             const regionOptionsList = document.getElementById('regionOptionsList');
             const regions = regionData[division] || [];
-            
-            // Reset Region
+
             document.getElementById('regionLabel').textContent = 'Select Region';
             document.getElementById('regionInput').value = '';
 
             if (regions.length > 0) {
                 regionOptionsList.innerHTML = regions.map(region => `
-                    <div class="region-option px-4 py-2 hover:bg-green-50 rounded-lg cursor-pointer transition text-gray-700" data-value="${region}">${region}</div>
-                `).join('');
+            <div class="region-option px-4 py-2 hover:bg-green-50 rounded-lg cursor-pointer transition text-gray-700" data-value="${region}">
+                ${region}
+            </div>
+        `).join('');
             } else {
-                regionOptionsList.innerHTML = '<div class="px-4 py-2 text-gray-400 text-sm">No regions available</div>';
+                regionOptionsList.innerHTML =
+                    '<div class="px-4 py-2 text-gray-400 text-sm">No regions available</div>';
             }
+
         });
 
         // Initialize Region Dropdown
@@ -270,7 +279,13 @@
             const confirm = document.getElementById('regConfirmPassword').value;
             const errorElement = document.getElementById('passwordError');
 
+            if (pass.length < 6) {
+        errorElement.textContent = "Password must be at least 6 characters";
+        errorElement.classList.remove('hidden');
+        return false;
+    }
             if (pass !== confirm) {
+                errorElement.textContent = "Passwords do not match";
                 errorElement.classList.remove('hidden');
                 return false;
             }

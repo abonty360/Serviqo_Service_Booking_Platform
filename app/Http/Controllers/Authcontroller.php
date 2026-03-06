@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -30,30 +31,41 @@ class AuthController extends Controller
     }
     public function register(Request $request)
     {
-        $request->validate([
-            'fname' => 'required|string|max:255',
-            'lname' => 'required|string|max:255',
-            'dob' => 'required|date',
-            'email' => 'required|email|unique:customers,email',
-            'phone' => 'nullable|string',
-            'password' => 'required|min:6',
-            'address' => 'nullable|string',
-            'city' => 'required|in:Dhaka,Chittagong,Sylhet,Barisal,Rangpur,Rajshahi,Khulna'
-        ]);
+        try {
+            $request->validate([
+                'fname' => 'required|string|max:255',
+                'lname' => 'required|string|max:255',
+                'dob' => 'required|date',
+                'email' => 'required|email|unique:customers,email',
+                'phone' => 'nullable|string',
+                'password' => 'bail|required|min:6|confirmed',
+                'address' => 'nullable|string',
+                'city' => 'required|in:Dhaka,Chittagong,Sylhet,Barisal,Rangpur,Rajshahi,Khulna',
+                'region' => 'required|string'
+            ]);
 
-        Customer::create([
-            'fname' => $request->fname,
-            'lname' => $request->lname,
-            'dob' => $request->dob,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'password' => Hash::make($request->password),
-            'address' => $request->address,
-            'city' => $request->city,
-            'preferred_payment_method' => null
-        ]);
+            Customer::create([
+                'fname' => $request->fname,
+                'lname' => $request->lname,
+                'dob' => $request->dob,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'password' => Hash::make($request->password),
+                'address' => $request->address,
+                'city' => $request->city,
+                'region' => $request->region,
+                'preferred_payment_method' => null
+            ]);
 
-        return redirect()->route('login', ['signup' => 'success']);
+            return redirect()->route('login', ['signup' => 'success']);
+        } catch (ValidationException $e) {
+
+            return back()->withErrors($e->validator)->withInput();
+
+        } catch (\Exception $e) {
+
+            return back()->with('error', 'Registration failed. Please try again.');
+        }
     }
 
     public function logout()

@@ -19,6 +19,7 @@ class Customer extends Authenticatable implements JWTSubject
         'password',
         'address',
         'city',
+        'region',
         'preferred_payment_method'
     ];
 
