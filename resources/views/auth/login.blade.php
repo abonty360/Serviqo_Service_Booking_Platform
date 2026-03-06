@@ -94,6 +94,30 @@
             }
         });
     </script>
+    <script>
+        document.querySelector("form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!data.error) {
+                localStorage.setItem("token", data.token);
+                window.location.href = "/";
+            } else {
+                alert(data.message);
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -14,13 +14,19 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (!$token = auth('api')->attempt($credentials)) {
-            return back()->withErrors([
-                'email' => 'Invalid email or password'
-            ]);
+            return response()->json([
+                "error" => true,
+                "message" => "Invalid email or password"
+            ], 401);
         }
-         session(['jwt_token' => $token]);
+        session(['jwt_token' => $token]);
 
-        return redirect('/')->with('logged_in', true);
+        return response()->json([
+            "error" => false,
+            "message" => "Login successful",
+            "token" => $token,
+            "customer" => auth('api')->user()
+        ]);
     }
     public function register(Request $request)
     {
