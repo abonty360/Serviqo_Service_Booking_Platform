@@ -64,12 +64,28 @@ class AuthController extends Controller
                 'preferred_payment_method' => null
             ]);
 
+            if ($request->expectsJson()) {
+                return response()->json([
+                    "message" => "Registration successful"
+                ], 201);
+            }
+
             return redirect()->route('login', ['signup' => 'success']);
         } catch (ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    "errors" => $e->errors()
+                ], 422);
+            }
 
             return back()->withErrors($e->validator)->withInput();
 
         } catch (\Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    "error" => $e->getMessage()
+                ], 500);
+            }
             return back()->with('error', 'Registration failed: ' . $e->getMessage())->withInput();
         }
     }
