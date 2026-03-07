@@ -70,8 +70,7 @@ class AuthController extends Controller
             return back()->withErrors($e->validator)->withInput();
 
         } catch (\Exception $e) {
-
-            return back()->with('error', 'Registration failed. Please try again.');
+            return back()->with('error', 'Registration failed: ' . $e->getMessage())->withInput();
         }
     }
 
