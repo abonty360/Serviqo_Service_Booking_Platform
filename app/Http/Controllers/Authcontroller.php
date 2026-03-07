@@ -42,13 +42,17 @@ class AuthController extends Controller
                     'unique:customers,email',
                     'regex:/^[^@]+@[^@]+\.(com|org|net|edu|co|io|gov)$/i'
                 ],
-                'phone' => 'nullable|string',
+                'phone' => [
+                    'required',
+                    'regex:/^(\+8801|01)[3-9][0-9]{8}$/'
+                ],
                 'password' => 'bail|required|min:6|confirmed',
                 'address' => 'nullable|string',
                 'city' => 'required|in:Dhaka,Chittagong,Sylhet,Barisal,Rangpur,Rajshahi,Khulna',
                 'region' => 'required|string'
             ], [
-                'email.regex' => 'Email must end with a valid domain'
+                'email.regex' => 'Email must end with a valid domain',
+                'phone.regex' => 'Enter a valid Bangladesh phone number'
             ]);
 
             Customer::create([
