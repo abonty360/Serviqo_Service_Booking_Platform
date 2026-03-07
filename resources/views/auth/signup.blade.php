@@ -32,6 +32,16 @@
                     </ul>
                 </div>
             @endif
+            @if (session('error'))
+                <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
+                    {{ session('error') }}
+                </div>
+            @endif
+            @if (session('success'))
+                <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
+                    {{ session('success') }}
+                </div>
+            @endif
             <form id="registerFormElement" action="{{ route('customer.register') }}" method="POST" class="space-y-4"
                 onsubmit="return validatePasswords()">
                 @csrf
@@ -68,7 +78,7 @@
                         <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                             <i class="fas fa-envelope"></i>
                         </span>
-                        <input type="email" name="email" required
+                        <input type="email" name="email" required pattern="^[^@]+@[^@]+\.(com|org|net|edu|co|io|gov)$"
                             class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
                             placeholder="name@example.com">
                     </div>
@@ -81,7 +91,7 @@
                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                                 <i class="fas fa-phone"></i>
                             </span>
-                            <input type="tel" name="phone" required
+                            <input type="tel" name="phone" required pattern="^(\+8801|01)[3-9][0-9]{8}$"
                                 class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
                                 placeholder="+880 1XXX-XXXXXX">
                         </div>
@@ -92,7 +102,7 @@
                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                                 <i class="fas fa-calendar-alt"></i>
                             </span>
-                            <input type="date" name="dob" required
+                            <input type="date" name="dob" required max="{{ now()->subYears(18)->format('Y-m-d') }}"
                                 class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition text-gray-700">
                         </div>
                     </div>
@@ -120,12 +130,11 @@
                             class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
                             <i class="fas fa-chevron-down text-xs"></i>
                         </div>
-                        <input type="hidden" name="division" id="divisionInput" required>
+                        <input type="hidden" name="division" id="divisionInput">
                     </div>
                 </div>
 
                 <div>
-                    <!-- Custom Region Dropdown -->
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Region</label>
                     <div class="relative dropdown-container" id="regionContainer">
                         <button type="button" id="regionButton"
@@ -216,7 +225,6 @@
             'Khulna': ['Boyra', 'Khalishpur', 'Sonadanga', 'Daulatpur', 'Dumuria', 'Dighalia', 'Batiaghata', 'Phultala', 'Rupsha', 'Terokhada', 'Paikgachha']
         };
 
-        // Custom Dropdown Logic
         function setupDropdown(buttonId, menuId, labelId, inputId, optionClass, onSelect) {
             const button = document.getElementById(buttonId);
             const menu = document.getElementById(menuId);
@@ -225,14 +233,12 @@
 
             button.addEventListener('click', (e) => {
                 e.stopPropagation();
-                // Close other dropdowns
                 document.querySelectorAll('[id$="Menu"]').forEach(m => {
                     if (m.id !== menuId) m.classList.add('hidden');
                 });
                 menu.classList.toggle('hidden');
             });
 
-            // delegated listener for options
             menu.addEventListener('click', (e) => {
                 const option = e.target.closest('.' + optionClass);
                 if (option) {
@@ -245,12 +251,10 @@
             });
         }
 
-        // Close dropdowns when clicking outside
         document.addEventListener('click', () => {
             document.querySelectorAll('[id$="Menu"]').forEach(m => m.classList.add('hidden'));
         });
 
-        // Initialize Division Dropdown
         const divisionSelect = document.querySelector('select[name="city"]');
 
         divisionSelect.addEventListener('change', function () {
@@ -275,7 +279,6 @@
 
         });
 
-        // Initialize Region Dropdown
         setupDropdown('regionButton', 'regionMenu', 'regionLabel', 'regionInput', 'region-option');
 
         function validatePasswords() {
