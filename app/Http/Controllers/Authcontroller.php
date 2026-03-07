@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -35,7 +36,11 @@ class AuthController extends Controller
             $request->validate([
                 'fname' => 'required|string|max:255',
                 'lname' => 'required|string|max:255',
-                'dob' => 'required|date',
+                'dob' => [
+                    'required',
+                    'date',
+                    'before_or_equal:' . Carbon::now()->subYears(18)->toDateString()
+                ],
                 'email' => [
                     'required',
                     'email',
@@ -52,7 +57,8 @@ class AuthController extends Controller
                 'region' => 'required|string'
             ], [
                 'email.regex' => 'Email must end with a valid domain',
-                'phone.regex' => 'Enter a valid Bangladesh phone number'
+                'phone.regex' => 'Enter a valid Bangladesh phone number',
+                'dob.before_or_equal' => 'You must be at least 18 years old to sign up.'
             ]);
 
             Customer::create([

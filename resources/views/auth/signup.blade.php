@@ -102,7 +102,7 @@
                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                                 <i class="fas fa-calendar-alt"></i>
                             </span>
-                            <input type="date" name="dob" required
+                            <input type="date" name="dob" required max="{{ now()->subYears(18)->format('Y-m-d') }}"
                                 class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition text-gray-700">
                         </div>
                     </div>
