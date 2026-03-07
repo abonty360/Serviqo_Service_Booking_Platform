@@ -121,8 +121,11 @@
                         </div>
                         <input type="hidden" name="division" id="divisionInput" required>
                     </div>
+                </div>
 
+                <div>
                     <!-- Custom Region Dropdown -->
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Region</label>
                     <div class="relative dropdown-container" id="regionContainer">
                         <button type="button" id="regionButton"
                             class="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition bg-white text-gray-700 text-left flex items-center justify-between">
