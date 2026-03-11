@@ -287,10 +287,10 @@
             const errorElement = document.getElementById('passwordError');
 
             if (pass.length < 6) {
-        errorElement.textContent = "Password must be at least 6 characters";
-        errorElement.classList.remove('hidden');
-        return false;
-    }
+                errorElement.textContent = "Password must be at least 6 characters";
+                errorElement.classList.remove('hidden');
+                return false;
+            }
             if (pass !== confirm) {
                 errorElement.textContent = "Passwords do not match";
                 errorElement.classList.remove('hidden');
@@ -299,6 +299,18 @@
             errorElement.classList.add('hidden');
             return true;
         }
+    </script>
+    <script>
+        function redirectIfLoggedIn() {
+            const token = localStorage.getItem("token");
+
+            if (token) {
+                window.location.replace("/");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", redirectIfLoggedIn);
+        window.addEventListener("pageshow", redirectIfLoggedIn);
     </script>
 </body>
 
