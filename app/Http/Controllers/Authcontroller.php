@@ -117,4 +117,65 @@ class AuthController extends Controller
             ], 400);
         }
     }
+
+    public function updateProfile(Request $request)
+    {
+        try {
+            $user = auth('api')->user();
+
+            $request->validate([
+                'fname' => 'required|string|max:255',
+                'lname' => 'required|string|max:255',
+                'dob' => [
+                    'required',
+                    'date',
+                    'before_or_equal:' . Carbon::now()->subYears(18)->toDateString()
+                ],
+                'email' => [
+                    'required',
+                    'email',
+                    'unique:customers,email,' . $user->id,
+                    'regex:/^[^@]+@[^@]+\.(com|org|net|edu|co|io|gov)$/i'
+                ],
+                'phone' => [
+                    'required',
+                    'regex:/^(\+8801|01)[3-9][0-9]{8}$/'
+                ],
+                'address' => 'nullable|string',
+                'city' => 'required|in:Dhaka,Chittagong,Sylhet,Barisal,Rangpur,Rajshahi,Khulna',
+                'region' => 'required|string'
+            ], [
+                'email.regex' => 'Email must end with a valid domain',
+                'phone.regex' => 'Enter a valid Bangladesh phone number',
+                'dob.before_or_equal' => 'You must be at least 18 years old to use our service.'
+            ]);
+
+            $user->update([
+                'fname' => $request->fname,
+                'lname' => $request->lname,
+                'dob' => $request->dob,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'city' => $request->city,
+                'region' => $request->region,
+            ]);
+
+            return response()->json([
+                "error" => false,
+                "message" => "Profile updated successfully",
+                "customer" => $user
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                "error" => true,
+                "errors" => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                "error" => true,
+                "message" => "Failed to update profile: " . $e->getMessage()
+            ], 500);
+        }
+    }
 }
