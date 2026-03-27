@@ -49,10 +49,10 @@
                             <option value="painting">House Painting</option>
                         </select>
                     </div>
-                    <button
-                        class="w-full md:w-auto px-10 py-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg hover:shadow-green-200">
+                    <a href="{{ route('services') }}"
+                        class="w-full md:w-auto px-10 py-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg hover:shadow-green-200 text-center">
                         Search
-                    </button>
+                    </a>
                 </div>
 
                 <!-- Popular Services Tags -->
@@ -174,7 +174,7 @@
                     </div>
                     <h3 class="text-xl font-bold mb-2">Cleaning Services</h3>
                     <p class="text-gray-600 mb-4">Professional home and office cleaning</p>
-                    <a href="#" class="text-green-600 font-semibold flex items-center group-hover:underline">
+                    <a href="{{ route('services') }}" class="text-green-600 font-semibold flex items-center group-hover:underline">
                         Book Now <i class="fas fa-chevron-right ml-2 text-xs"></i>
                     </a>
                 </div>
@@ -187,7 +187,7 @@
                     </div>
                     <h3 class="text-xl font-bold mb-2">Appliance Repair</h3>
                     <p class="text-gray-600 mb-4">Fix AC, fridge, washing machine & more</p>
-                    <a href="#" class="text-green-600 font-semibold flex items-center group-hover:underline">
+                    <a href="{{ route('services') }}" class="text-green-600 font-semibold flex items-center group-hover:underline">
                         Book Now <i class="fas fa-chevron-right ml-2 text-xs"></i>
                     </a>
                 </div>
@@ -200,7 +200,7 @@
                     </div>
                     <h3 class="text-xl font-bold mb-2">Maintenance</h3>
                     <p class="text-gray-600 mb-4">Plumbing, electrical, carpentry services</p>
-                    <a href="#" class="text-green-600 font-semibold flex items-center group-hover:underline">
+                    <a href="{{ route('services') }}" class="text-green-600 font-semibold flex items-center group-hover:underline">
                         Book Now <i class="fas fa-chevron-right ml-2 text-xs"></i>
                     </a>
                 </div>
@@ -213,7 +213,7 @@
                     </div>
                     <h3 class="text-xl font-bold mb-2">Beauty & Makeover</h3>
                     <p class="text-gray-600 mb-4">Salon services at your doorstep</p>
-                    <a href="#" class="text-green-600 font-semibold flex items-center group-hover:underline">
+                    <a href="{{ route('services') }}" class="text-green-600 font-semibold flex items-center group-hover:underline">
                         Book Now <i class="fas fa-chevron-right ml-2 text-xs"></i>
                     </a>
                 </div>
@@ -226,7 +226,7 @@
                     </div>
                     <h3 class="text-xl font-bold mb-2">Pest Control</h3>
                     <p class="text-gray-600 mb-4">Complete pest management solutions</p>
-                    <a href="#" class="text-green-600 font-semibold flex items-center group-hover:underline">
+                    <a href="{{ route('services') }}" class="text-green-600 font-semibold flex items-center group-hover:underline">
                         Book Now <i class="fas fa-chevron-right ml-2 text-xs"></i>
                     </a>
                 </div>
@@ -239,7 +239,7 @@
                     </div>
                     <h3 class="text-xl font-bold mb-2">Painting</h3>
                     <p class="text-gray-600 mb-4">Interior and exterior painting</p>
-                    <a href="#" class="text-green-600 font-semibold flex items-center group-hover:underline">
+                    <a href="{{ route('services') }}" class="text-green-600 font-semibold flex items-center group-hover:underline">
                         Book Now <i class="fas fa-chevron-right ml-2 text-xs"></i>
                     </a>
                 </div>
