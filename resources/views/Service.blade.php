@@ -32,132 +32,152 @@
         <div class="container mx-auto px-6">
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Cleaning -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group">
-                    <div class="w-14 h-14 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
-                        <i class="fas fa-broom text-2xl"></i>
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group overflow-hidden">
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ asset('Images/Cleaning.jpg') }}" alt="Cleaning" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Cleaning Services</h3>
-                    <p class="text-gray-600 mb-6">Professional home and office cleaning including deep cleaning, kitchen cleaning, and bathroom sanitization.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-green-600 font-bold">$29 - $199</span>
-                        <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold mb-2">Cleaning Services</h3>
+                        <p class="text-gray-600 mb-6">Professional home and office cleaning including deep cleaning, kitchen cleaning, and bathroom sanitization.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-600 font-bold">$29 - $199</span>
+                            <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Appliance Repair -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group">
-                    <div class="w-14 h-14 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
-                        <i class="fas fa-plug text-2xl"></i>
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group overflow-hidden">
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ asset('Images/Reapir.jpg') }}" alt="Appliance Repair" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Appliance Repair</h3>
-                    <p class="text-gray-600 mb-6">Expert repair for AC, refrigerator, washing machine, microwave, and other essential home appliances.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-green-600 font-bold">$49 - $250</span>
-                        <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold mb-2">Appliance Repair</h3>
+                        <p class="text-gray-600 mb-6">Expert repair for AC, refrigerator, washing machine, microwave, and other essential home appliances.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-600 font-bold">$49 - $250</span>
+                            <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Maintenance -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group">
-                    <div class="w-14 h-14 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
-                        <i class="fas fa-tools text-2xl"></i>
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group overflow-hidden">
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ asset('Images/Plumbing.jpg') }}" alt="Maintenance" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Maintenance</h3>
-                    <p class="text-gray-600 mb-6">Reliable plumbing, electrical work, carpentry, and general home maintenance services by certified professionals.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-green-600 font-bold">$35 - $150</span>
-                        <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold mb-2">Maintenance</h3>
+                        <p class="text-gray-600 mb-6">Reliable plumbing, electrical work, carpentry, and general home maintenance services by certified professionals.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-600 font-bold">$35 - $150</span>
+                            <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Beauty -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group">
-                    <div class="w-14 h-14 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
-                        <i class="fas fa-spa text-2xl"></i>
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group overflow-hidden">
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ asset('Images/Makeup.jpg') }}" alt="Beauty & Makeover" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Beauty & Makeover</h3>
-                    <p class="text-gray-600 mb-6">Get salon-quality beauty services, haircuts, facials, and massages in the comfort of your own home.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-green-600 font-bold">$15 - $120</span>
-                        <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold mb-2">Beauty & Makeover</h3>
+                        <p class="text-gray-600 mb-6">Get salon-quality beauty services, haircuts, facials, and massages in the comfort of your own home.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-600 font-bold">$15 - $120</span>
+                            <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Pest Control -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group">
-                    <div class="w-14 h-14 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
-                        <i class="fas fa-bug-slash text-2xl"></i>
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group overflow-hidden">
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ asset('Images/Pest.jpg') }}" alt="Pest Control" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Pest Control</h3>
-                    <p class="text-gray-600 mb-6">Effective and safe pest management for termites, cockroaches, rodents, and other unwanted visitors.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-green-600 font-bold">$60 - $300</span>
-                        <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold mb-2">Pest Control</h3>
+                        <p class="text-gray-600 mb-6">Effective and safe pest management for termites, cockroaches, rodents, and other unwanted visitors.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-600 font-bold">$60 - $300</span>
+                            <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Painting -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group">
-                    <div class="w-14 h-14 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
-                        <i class="fas fa-paint-roller text-2xl"></i>
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group overflow-hidden">
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ asset('Images/Painting.jpg') }}" alt="Painting" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Painting</h3>
-                    <p class="text-gray-600 mb-6">Transform your space with our professional interior and exterior painting services. Free color consultation included.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-green-600 font-bold">$199 - $2000+</span>
-                        <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold mb-2">Painting</h3>
+                        <p class="text-gray-600 mb-6">Transform your space with our professional interior and exterior painting services. Free color consultation included.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-600 font-bold">$199 - $2000+</span>
+                            <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Car Care -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group">
-                    <div class="w-14 h-14 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
-                        <i class="fas fa-car text-2xl"></i>
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group overflow-hidden">
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ asset('Images/Car care.jpg') }}" alt="Car Care" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Car Care Services</h3>
-                    <p class="text-gray-600 mb-6">Professional car wash, detailing, interior cleaning, and minor repairs right at your doorstep.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-green-600 font-bold">$19 - $149</span>
-                        <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold mb-2">Car Care Services</h3>
+                        <p class="text-gray-600 mb-6">Professional car wash, detailing, interior cleaning, and minor repairs right at your doorstep.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-600 font-bold">$19 - $149</span>
+                            <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Trip & Travels -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group">
-                    <div class="w-14 h-14 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
-                        <i class="fas fa-plane text-2xl"></i>
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group overflow-hidden">
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ asset('Images/Trip.jpg') }}" alt="Trip & Travels" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Trip & Travels</h3>
-                    <p class="text-gray-600 mb-6">Hassle-free travel planning, ticket booking, and local tour guides for your next adventure.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-green-600 font-bold">$99 - $999+</span>
-                        <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold mb-2">Trip & Travels</h3>
+                        <p class="text-gray-600 mb-6">Hassle-free travel planning, ticket booking, and local tour guides for your next adventure.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-600 font-bold">$99 - $999+</span>
+                            <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Health & Care -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group">
-                    <div class="w-14 h-14 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
-                        <i class="fas fa-heartbeat text-2xl"></i>
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group overflow-hidden">
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ asset('Images/Health.jpg') }}" alt="Health & Care" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Health & Care</h3>
-                    <p class="text-gray-600 mb-6">Professional nursing care, physiotherapy, and elderly assistance services at home.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-green-600 font-bold">$25 - $200/day</span>
-                        <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold mb-2">Health & Care</h3>
+                        <p class="text-gray-600 mb-6">Professional nursing care, physiotherapy, and elderly assistance services at home.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-600 font-bold">$25 - $200/day</span>
+                            <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                        </div>
                     </div>
                 </div>
 
                 <!-- House Shifting -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group">
-                    <div class="w-14 h-14 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
-                        <i class="fas fa-truck-moving text-2xl"></i>
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 group overflow-hidden">
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ asset('Images/Shifting.jpg') }}" alt="House Shifting" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
-                    <h3 class="text-xl font-bold mb-2">House Shifting</h3>
-                    <p class="text-gray-600 mb-6">Reliable packing and moving services for smooth relocation. We handle your belongings with care.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-green-600 font-bold">$150 - $1500+</span>
-                        <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold mb-2">House Shifting</h3>
+                        <p class="text-gray-600 mb-6">Reliable packing and moving services for smooth relocation. We handle your belongings with care.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-600 font-bold">$150 - $1500+</span>
+                            <a href="#" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Book Now</a>
+                        </div>
                     </div>
                 </div>
             </div>
