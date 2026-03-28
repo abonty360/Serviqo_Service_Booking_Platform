@@ -51,7 +51,7 @@
 
                 <!-- Right Side: Form -->
                 <div class="md:w-2/3 p-12">
-                    <form action="#" method="POST" class="space-y-6">
+                    <form id="bookingForm" class="space-y-6">
                         @csrf
                         <div class="grid md:grid-cols-2 gap-6">
                             <!-- Service Selection -->
@@ -184,6 +184,20 @@
         </div>
     </div>
 
+    <!-- Booking Confirmation Modal -->
+    <div id="confirmationModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50 px-4">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform transition-all">
+            <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check text-4xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-2">Booking Confirmed</h3>
+            <p class="text-gray-500 mb-8">Thanks for being with us.</p>
+            <button id="closeModal" class="w-full py-3 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-all">
+                Great!
+            </button>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-12 mt-auto">
         <div class="container mx-auto px-6 text-center">
@@ -200,6 +214,22 @@
                 const select = document.getElementById('service-select');
                 if (select) select.value = service.toLowerCase();
             }
+
+            const bookingForm = document.getElementById('bookingForm');
+            const confirmationModal = document.getElementById('confirmationModal');
+            const closeModal = document.getElementById('closeModal');
+
+            bookingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Show modal
+                confirmationModal.classList.remove('hidden');
+            });
+
+            closeModal.addEventListener('click', function() {
+                confirmationModal.classList.add('hidden');
+                // Optionally redirect home after confirmation
+                window.location.href = '/';
+            });
         });
     </script>
 
