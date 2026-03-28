@@ -24,6 +24,8 @@ Route::middleware(['auth:api','prevent-back-history'])->group(function () {
         return response()->json(auth('api')->user());
     });
 
+    Route::put('/profile', [AuthController::class, 'updateProfile']);
+
     Route::post('/logout', [AuthController::class,'logout']);
 
 });
