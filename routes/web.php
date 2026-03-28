@@ -37,5 +37,22 @@ Route::get('/guest', function () {
 Route::get('/profile', function () {
     return view('profile');
 });
+
+Route::get('/services', function () {
+    return view('Service');
+})->name('services');
+
+Route::get('/book', function () {
+    return view('booking');
+})->name('book');
+
+Route::get('/how-it-works', function () {
+    return view('how-it-works');
+})->name('how-it-works');
+
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
 

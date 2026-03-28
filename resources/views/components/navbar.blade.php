@@ -6,8 +6,9 @@
         <span class="text-2xl font-bold text-gray-900 tracking-tight">Serviqo</span>
     </a>
     <div class="hidden md:flex ml-auto space-x-10 font-medium text-gray-600">
-        <a href="#" class="hover:text-green-600 transition">Services</a>
-        <a href="#" class="hover:text-green-600 transition">How it Works</a>
+        <a href="{{ route('services') }}" class="{{ request()->routeIs('services') ? 'text-green-600' : 'hover:text-green-600' }} transition">Services</a>
+        <a href="{{ route('how-it-works') }}" class="{{ request()->routeIs('how-it-works') ? 'text-green-600' : 'hover:text-green-600' }} transition">How it Works</a>
+        <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'text-green-600' : 'hover:text-green-600' }} transition">About</a>
     </div>
     <div class="flex space-x-4" id="authButtons"></div>
 </nav>
