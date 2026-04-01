@@ -85,7 +85,7 @@
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
                 <h2 class="text-3xl font-bold text-gray-900 mb-4">How it Works</h2>
-                <p class="text-gray-600">Booking a service has never been easier</p>
+                <p class="text-gray-600">Ordering a service has never been easier</p>
             </div>
             <div class="grid md:grid-cols-4 gap-8">
                 <div class="relative text-center">
@@ -109,7 +109,7 @@
                         class="w-16 h-16 bg-white text-green-600 rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
                         3</div>
                     <h3 class="font-bold mb-2">Book Pro</h3>
-                    <p class="text-sm text-gray-600">Confirm booking with a verified professional</p>
+                    <p class="text-sm text-gray-600">Confirm order with a verified professional</p>
                     <div class="hidden md:block absolute top-8 left-1/2 w-full h-0.5 bg-green-200 -z-10"></div>
                 </div>
                 <div class="text-center">
@@ -142,7 +142,7 @@
                         class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-bolt text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4">Fast Booking</h3>
+                    <h3 class="text-xl font-bold mb-4">Fast Ordering</h3>
                     <p class="text-gray-600">Book services in less than 60 seconds with instant confirmation.</p>
                 </div>
                 <div class="p-8 rounded-2xl hover:bg-green-50 transition">
