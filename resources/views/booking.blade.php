@@ -62,9 +62,9 @@
                                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                                         <i class="fas fa-tools"></i>
                                     </span>
-                                    <select name="service" id="service-select" required
+                                    <select id="main-service-select" required
                                         class="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition bg-white appearance-none">
-                                        <option value="">Choose a service...</option>
+                                        <option value="">Choose a service category...</option>
                                         <option value="cleaning">Cleaning Services</option>
                                         <option value="repair">Appliance Repair</option>
                                         <option value="maintenance">Maintenance</option>
@@ -78,6 +78,25 @@
                                     </select>
                                     <div
                                         class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+                                        <i class="fas fa-chevron-down text-xs"></i>
+                                    </div>
+                                </div>
+                                <!-- Hidden input to hold the actual service value for form submission -->
+                                <input type="hidden" name="service" id="final-service-value">
+                            </div>
+
+                            <!-- Dynamic Sub-Service Selection -->
+                            <div id="sub-service-container" class="md:col-span-2 hidden animate-fade-in">
+                                <label class="block text-sm font-bold text-gray-700 mb-2">Select Specific Service</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
+                                        <i class="fas fa-list-ul"></i>
+                                    </span>
+                                    <select id="sub-service-select"
+                                        class="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition bg-white appearance-none">
+                                        <!-- Options populated via JS -->
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
                                         <i class="fas fa-chevron-down text-xs"></i>
                                     </div>
                                 </div>
@@ -136,13 +155,10 @@
                             <!-- Payment Method -->
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-bold text-gray-700 mb-4">Select Payment Method</label>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <label
-                                        class="relative flex items-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-green-50 transition group peer-checked:border-green-500">
-                                        <input type="radio" name="payment_method" value="cash" checked
-                                            class="peer hidden">
-                                        <div
-                                            class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center peer-checked:border-green-500 peer-checked:bg-green-500 mr-3">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <label class="relative flex items-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-green-50 transition group peer-checked:border-green-500">
+                                        <input type="radio" name="payment_method" value="cash" checked class="peer hidden">
+                                        <div class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center peer-checked:border-green-500 peer-checked:bg-green-500 mr-3">
                                             <div class="w-2 h-2 bg-white rounded-full"></div>
                                         </div>
                                         <div class="flex flex-col">
@@ -153,27 +169,9 @@
                                             class="fas fa-money-bill-wave ml-auto text-gray-400 group-hover:text-green-500"></i>
                                     </label>
 
-                                    <label
-                                        class="relative flex items-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-green-50 transition group">
-                                        <input type="radio" name="payment_method" value="card" class="peer hidden">
-                                        <div
-                                            class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center peer-checked:border-green-500 peer-checked:bg-green-500 mr-3">
-                                            <div class="w-2 h-2 bg-white rounded-full"></div>
-                                        </div>
-                                        <div class="flex flex-col">
-                                            <span class="text-sm font-bold text-gray-700">Credit / Debit Card</span>
-                                            <span class="text-xs text-gray-500">Secure online payment</span>
-                                        </div>
-                                        <i
-                                            class="fas fa-credit-card ml-auto text-gray-400 group-hover:text-green-500"></i>
-                                    </label>
-
-                                    <label
-                                        class="relative flex items-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-green-50 transition group">
-                                        <input type="radio" name="payment_method" value="mobile_banking"
-                                            class="peer hidden">
-                                        <div
-                                            class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center peer-checked:border-green-500 peer-checked:bg-green-500 mr-3">
+                                    <label class="relative flex items-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-green-50 transition group">
+                                        <input type="radio" name="payment_method" value="mobile_banking" class="peer hidden">
+                                        <div class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center peer-checked:border-green-500 peer-checked:bg-green-500 mr-3">
                                             <div class="w-2 h-2 bg-white rounded-full"></div>
                                         </div>
                                         <div class="flex flex-col">
@@ -251,12 +249,123 @@
         protectPage();
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        // Auto-select service from URL parameter
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainSelect = document.getElementById('main-service-select');
+            const subContainer = document.getElementById('sub-service-container');
+            const subSelect = document.getElementById('sub-service-select');
+            const finalValueInput = document.getElementById('final-service-value');
+
+            const subServicesData = {
+                'cleaning': [
+                    { value: 'cleaning', label: 'All Cleaning Services' },
+                    { value: 'home cleaning', label: 'Home Cleaning' },
+                    { value: 'furniture & carpet cleaning', label: 'Furniture & Carpet Cleaning' },
+                    { value: 'kitchen cleaning', label: 'Kitchen Cleaning' },
+                    { value: 'washroom cleaning', label: 'Washroom Cleaning' }
+                ],
+                'repair': [
+                    { value: 'repair', label: 'All Appliance Repair' },
+                    { value: 'ac repair', label: 'AC Repair' },
+                    { value: 'tv repair', label: 'TV Repair' },
+                    { value: 'washing machine repair', label: 'Washing Machine Repair' },
+                    { value: 'oven repair', label: 'Oven Repair' }
+                ],
+                'maintenance': [
+                    { value: 'maintenance', label: 'All Maintenance' },
+                    { value: 'plumbing', label: 'Plumbing' },
+                    { value: 'electrical repair', label: 'Electrical Repair' },
+                    { value: 'carpentry', label: 'Carpentry' }
+                ],
+                'beauty': [
+                    { value: 'beauty', label: 'All Beauty & Makeover' },
+                    { value: 'nail extension', label: 'Nail Extension' },
+                    { value: 'hair care', label: 'Hair Care' },
+                    { value: 'home makeover', label: 'Home Makeover Service' },
+                    { value: 'spa', label: 'Spa Service' }
+                ],
+                'pest': [
+                    { value: 'pest', label: 'All Pest Control' },
+                    { value: 'premium pest control', label: 'Premium Pest Control' },
+                    { value: 'regular pest control', label: 'Regular Pest Control' }
+                ],
+                'painting': [
+                    { value: 'painting', label: 'All Painting' },
+                    { value: 'renovation', label: 'Renovation' },
+                    { value: 'renovation consultancy', label: 'Renovation Consultancy' },
+                    { value: 'building painting', label: 'Building Painting' },
+                    { value: 'room painting', label: 'Room Painting' }
+                ],
+                'car': [
+                    { value: 'car', label: 'All Car Care' },
+                    { value: 'car polishing & detailing', label: 'Car Polishing & Detailing' },
+                    { value: 'regular car wash', label: 'Regular Car Wash' },
+                    { value: 'diagnosis & repair', label: 'Diagnosis & Repair' }
+                ],
+                'travel': [
+                    { value: 'travel', label: 'All Trip & Travels' },
+                    { value: 'tourist bus rental', label: 'Tourist Bus Rental' },
+                    { value: 'tourist guide booking', label: 'Tourist Guide Booking' }
+                ],
+                'health': [
+                    { value: 'health', label: 'All Health & Care' },
+                    { value: 'nursing service', label: 'Nursing Service' },
+                    { value: 'caregiving', label: 'Caregiving' },
+                    { value: 'doctor consultance', label: 'Doctor Consultance' }
+                ],
+                'shifting': [
+                    { value: 'shifting', label: 'All House Shifting' },
+                    { value: 'house shifting service', label: 'House Shifting Service' },
+                    { value: 'commercial shifting service', label: 'Commercial Shifting Service' },
+                    { value: 'pickup & truck rental', label: 'Pickup & Truck Rental' }
+                ]
+            };
+
+            function updateSubServices(category, preselectedValue = null) {
+                const subs = subServicesData[category];
+                if (subs) {
+                    subSelect.innerHTML = subs.map(s => 
+                        `<option value="${s.value}" ${preselectedValue === s.value ? 'selected' : ''}>${s.label}</option>`
+                    ).join('');
+                    subContainer.classList.remove('hidden');
+                    finalValueInput.value = subSelect.value;
+                } else {
+                    subContainer.classList.add('hidden');
+                    finalValueInput.value = category;
+                }
+            }
+
+            mainSelect.addEventListener('change', function() {
+                updateSubServices(this.value);
+            });
+
+            subSelect.addEventListener('change', function() {
+                finalValueInput.value = this.value;
+            });
+
+            // Initial check from URL
             const urlParams = new URLSearchParams(window.location.search);
-            const service = urlParams.get('service');
-            if (service) {
-                const select = document.getElementById('service-select');
-                if (select) select.value = service.toLowerCase();
+            let serviceParam = urlParams.get('service');
+            
+            if (serviceParam) {
+                serviceParam = serviceParam.toLowerCase();
+                // Check if it's a sub-service
+                let parentCategory = null;
+                for (const cat in subServicesData) {
+                    if (subServicesData[cat].some(s => s.value === serviceParam)) {
+                        parentCategory = cat;
+                        break;
+                    }
+                }
+
+                if (parentCategory) {
+                    mainSelect.value = parentCategory;
+                    updateSubServices(parentCategory, serviceParam);
+                    finalValueInput.value = serviceParam;
+                } else {
+                    mainSelect.value = serviceParam;
+                    updateSubServices(serviceParam);
+                }
             }
 
             const bookingForm = document.getElementById('bookingForm');
