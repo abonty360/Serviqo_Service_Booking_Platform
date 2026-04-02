@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BookingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,8 +45,6 @@ Route::get('/services', function () {
 Route::get('/book', function () {
     return view('booking');
 })->name('book');
-Route::post('/book', [BookingController::class, 'store'])->name('book.store');
-Route::post('/book/{id}/complete', [BookingController::class, 'complete'])->name('book.complete');
 
 Route::get('/how-it-works', function () {
     return view('how-it-works');
@@ -56,6 +53,18 @@ Route::get('/how-it-works', function () {
 Route::get('/about', function () {
     return view('about');
 })->name('about');
+
+Route::get('/admin/dashboard', function () {
+    return view('admin.dashboard');
+});
+
+Route::get('/admin/providers', function () {
+    return view('admin.service_providers');
+});
+
+Route::get('/admin/all_bookings', function () {
+    return view('admin.all_booking');
+});
 
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
 

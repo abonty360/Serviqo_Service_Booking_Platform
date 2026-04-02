@@ -17,11 +17,12 @@
 
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
 
-@include('components.navbar')
+    @include('components.navbar')
 
     <div class="flex-grow container mx-auto px-6 py-12">
         <div class="max-w-4xl mx-auto">
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col md:flex-row">
+            <div
+                class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col md:flex-row">
                 <!-- Left Side: Image/Info -->
                 <div class="md:w-1/3 bg-green-500 p-12 text-white flex flex-col justify-center">
                     <div class="mb-8">
@@ -75,7 +76,8 @@
                                         <option value="health">Health & Care</option>
                                         <option value="shifting">House Shifting</option>
                                     </select>
-                                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+                                    <div
+                                        class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
                                         <i class="fas fa-chevron-down text-xs"></i>
                                     </div>
                                 </div>
@@ -163,7 +165,8 @@
                                             <span class="text-sm font-bold text-gray-700">Cash After Service</span>
                                             <span class="text-xs text-gray-500">Pay when job is done</span>
                                         </div>
-                                        <i class="fas fa-money-bill-wave ml-auto text-gray-400 group-hover:text-green-500"></i>
+                                        <i
+                                            class="fas fa-money-bill-wave ml-auto text-gray-400 group-hover:text-green-500"></i>
                                     </label>
 
                                     <label class="relative flex items-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-green-50 transition group">
@@ -175,7 +178,8 @@
                                             <span class="text-sm font-bold text-gray-700">Mobile Banking</span>
                                             <span class="text-xs text-gray-500">bKash, Nagad, Rocket</span>
                                         </div>
-                                        <i class="fas fa-mobile-screen ml-auto text-gray-400 group-hover:text-green-500"></i>
+                                        <i
+                                            class="fas fa-mobile-screen ml-auto text-gray-400 group-hover:text-green-500"></i>
                                     </label>
                                 </div>
                             </div>
@@ -192,14 +196,17 @@
     </div>
 
     <!-- Booking Confirmation Modal -->
-    <div id="confirmationModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50 px-4">
+    <div id="confirmationModal"
+        class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50 px-4">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform transition-all">
-            <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div
+                class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
                 <i class="fas fa-check text-4xl"></i>
             </div>
             <h3 class="text-2xl font-bold text-gray-900 mb-2">Order Confirmed</h3>
             <p class="text-gray-500 mb-8">Thanks for being with us.</p>
-            <button id="closeModal" class="w-full py-3 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-all">
+            <button id="closeModal"
+                class="w-full py-3 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-all">
                 Great!
             </button>
         </div>
@@ -211,7 +218,36 @@
             <p class="text-gray-400 text-sm">&copy; 2026 Serviqo. All rights reserved.</p>
         </div>
     </footer>
+    
+    <script>
+        async function protectPage() {
+            const token = localStorage.getItem("token");
 
+            if (!token) {
+                window.location.href = "/login";
+                return;
+            }
+
+            try {
+                const res = await fetch("/api/profile", {
+                    headers: {
+                        Authorization: "Bearer " + token
+                    }
+                });
+
+                if (!res.ok) {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("user");
+                    window.location.href = "/login";
+                }
+
+            } catch {
+                window.location.href = "/login";
+            }
+        }
+
+        protectPage();
+    </script>
     <script>
         // Auto-select service from URL parameter
         document.addEventListener('DOMContentLoaded', function() {
@@ -336,37 +372,37 @@
             const confirmationModal = document.getElementById('confirmationModal');
             const closeModal = document.getElementById('closeModal');
 
-            bookingForm.addEventListener('submit', function(e) {
+            bookingForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-                
+
                 const formData = new FormData(bookingForm);
                 const data = Object.fromEntries(formData.entries());
-                
-                fetch('{{ route("book.store") }}', {
+                const token = localStorage.getItem("token");
+
+                fetch('/api/book', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                        'Authorization': 'Bearer ' + token
                     },
                     body: JSON.stringify(data)
                 })
-                .then(response => response.json())
-                .then(result => {
-                    if(result.success) {
-                        confirmationModal.classList.remove('hidden');
-                    } else {
-                        alert('Error: ' + (result.message || 'Validation failed'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred during the order.');
-                });
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            confirmationModal.classList.remove('hidden');
+                        } else {
+                            alert('Error: ' + (result.message || 'Validation failed'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred during the order.');
+                    });
             });
 
-            closeModal.addEventListener('click', function() {
+            closeModal.addEventListener('click', function () {
                 confirmationModal.classList.add('hidden');
-                // Optionally redirect home after confirmation
                 window.location.href = '/';
             });
         });
