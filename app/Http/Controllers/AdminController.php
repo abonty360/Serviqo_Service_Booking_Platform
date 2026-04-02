@@ -8,35 +8,20 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        // Example stats (optional)
-        $totalUsers = Customer::where('role', 'user')->count();
-        $totalAdmins = Customer::where('role', 'admin')->count();
-
-        return view('admin.dashboard', compact('totalUsers', 'totalAdmins'));
+        return response()->json(auth('api')->user());
     }
 
-    /**
-     * Service Providers Page
-     */
     public function providers()
     {
-        // Example: assuming providers are stored in customers table
-        $providers = Customer::where('role', 'provider')->get();
+        $providers = Customer::all();
 
-        return view('admin.service_providers', compact('providers'));
+        return response()->json($providers);
     }
 
-    /**
-     * Bookings Page
-     */
     public function all_bookings()
     {
-        // Replace with your actual Booking model if exists
-        // Example:
-        // $bookings = Booking::with('customer')->latest()->get();
+        $bookings = [];
 
-        $bookings = []; // placeholder
-
-        return view('admin.all_bookings', compact('bookings'));
+        return response()->json($bookings);
     }
 }

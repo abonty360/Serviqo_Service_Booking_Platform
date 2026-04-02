@@ -1,7 +1,11 @@
-
-function renderNavbar() {
+function getCachedUser() {
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user) : null;
+}
+async function renderNavbar() {
 
     const token = localStorage.getItem("token");
+    const user = getCachedUser();
     const container = document.getElementById("authButtons");
     if (!container) return;
 
@@ -44,6 +48,7 @@ async function logoutUser() {
     });
 
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     renderNavbar();
     window.location.href = "/login";
 }
