@@ -25,7 +25,7 @@ class AdminController extends Controller
 
     public function all_bookings()
     {
-        $bookings = [];
+        $bookings = \App\Models\ServiceOrder::with(['customer', 'items.offering.subService'])->get();
 
         return response()->json($bookings);
     }
