@@ -5,6 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Bookings - Admin - Serviqo</title>
+    <script>
+        (function() {
+            if (!localStorage.getItem("token")) {
+                document.documentElement.style.display = 'none';
+                window.location.replace("/login");
+            }
+        })();
+        window.addEventListener("pageshow", function(e) {
+            if (e.persisted && !localStorage.getItem("token")) {
+                document.documentElement.style.display = 'none';
+                window.location.replace("/login");
+            }
+        });
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -343,6 +357,13 @@
                 `;
             }).join('');
         }
+ window.addEventListener("pageshow", function (event) {
+            if (event.persisted) {
+                if (!localStorage.getItem("token")) {
+                    window.location.replace("/login");
+                }
+            }
+        });
 
         document.addEventListener("DOMContentLoaded", () => {
             loadBookings();
