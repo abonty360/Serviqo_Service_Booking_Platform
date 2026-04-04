@@ -73,7 +73,7 @@
                                 <th class="px-4 py-3">Order Date</th>
                                 <th class="px-4 py-3">Scheduled Date</th>
                                 <th class="px-4 py-3">Total</th>
-                                <th class="px-4 py-3">Payment</th>
+                                <th class="px-4 py-3">Payment Method</th>
                                 <th class="px-4 py-3">Provider</th>
                                 <th class="px-4 py-3 text-center">Actions</th>
                             </tr>
@@ -104,7 +104,7 @@
                                 <th class="px-4 py-3">Status</th>
                                 <th class="px-4 py-3">Scheduled Date</th>
                                 <th class="px-4 py-3">Total</th>
-                                <th class="px-4 py-3">Payment</th>
+                                <th class="px-4 py-3">Payment Method</th>
                                 <th class="px-4 py-3">Provider</th>
                             </tr>
                         </thead>
@@ -261,6 +261,7 @@
                 });
 
                 const paymentMethod = b.payments && b.payments[0] ? b.payments[0].payment_method.toLowerCase() : '';
+                const paymentMethodDisplay = paymentMethod === 'cash' ? 'COD' : (paymentMethod === 'mobile_banking' ? 'Mobile Banking' : 'N/A');
                 let paymentStatusText = b.payment_status;
                 let paymentStatusClass = b.payment_status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700';
 
@@ -285,9 +286,7 @@
                         <td class="px-4 py-4 font-bold text-gray-900">$${b.total_amount}</td>
                         <td class="px-4 py-4">
                             <div class="flex flex-col gap-1">
-                                <span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${paymentStatusClass} w-fit">
-                                    ${paymentStatusText}
-                                </span>
+                                <span class="text-xs font-bold text-gray-800">${paymentMethodDisplay}</span>
                                 ${paymentMethod === 'mobile_banking' && b.payment_status !== 'paid' ? `
                                     <button onclick="updatePaymentStatus(${b.id}, 'paid')" class="text-[9px] text-green-600 hover:text-green-700 font-bold underline text-left">
                                         Approve Payment
@@ -329,6 +328,7 @@
                 if (b.status === 'cancelled') statusClass = "bg-red-100 text-red-600";
 
                 const paymentMethod = b.payments && b.payments[0] ? b.payments[0].payment_method.toLowerCase() : '';
+                const paymentMethodDisplay = paymentMethod === 'cash' ? 'COD' : (paymentMethod === 'mobile_banking' ? 'Mobile Banking' : 'N/A');
                 let paymentStatusText = b.payment_status;
                 let paymentStatusClass = b.payment_status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700';
 
@@ -352,9 +352,9 @@
                         <td class="px-4 py-4 text-xs text-gray-600">${new Date(b.scheduled_datetime).toLocaleString()}</td>
                         <td class="px-4 py-4 font-bold text-gray-900">$${b.total_amount}</td>
                         <td class="px-4 py-4">
-                            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${paymentStatusClass}">
-                                ${paymentStatusText}
-                            </span>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-xs font-bold text-gray-800">${paymentMethodDisplay}</span>
+                            </div>
                         </td>
                         <td class="px-4 py-4">
                             ${provider 
