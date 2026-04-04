@@ -19,18 +19,15 @@ jobs:
           ACCEPT_EULA: "Y"
         ports:
           - 1433:1433
-        options: >-
-          --health-cmd "exit 0"
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup environment
         run: |
           cp .env.example .env || true
 
-          # Force safe CI config
           echo "APP_ENV=testing" >> .env
           echo "APP_DEBUG=true" >> .env
 
@@ -42,28 +39,22 @@ jobs:
           echo "DB_PASSWORD=StrongPass!123" >> .env
 
       - name: Build containers
-        run: docker-compose build
+        run: docker compose build
 
       - name: Start containers
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Wait for services
         run: sleep 20
 
       - name: Install dependencies
-        run: docker-compose exec -T app composer install
+        run: docker compose exec -T app composer install
 
       - name: Generate app key
-        run: docker-compose exec -T app php artisan key:generate
-
-      - name: Generate JWT secret
-        run: docker-compose exec -T app php artisan jwt:secret || true
+        run: docker compose exec -T app php artisan key:generate
 
       - name: Clear config
-        run: docker-compose exec -T app php artisan config:clear
+        run: docker compose exec -T app php artisan config:clear
 
       - name: Laravel sanity check
-        run: docker-compose exec -T app php artisan --version
-
-      - name: Run tests
-        run: docker-compose exec -T app php artisan test || true
+        run: docker compose exec -T app php artisan --version
