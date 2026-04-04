@@ -20,7 +20,8 @@ class Customer extends Authenticatable implements JWTSubject
         'address',
         'city',
         'region',
-        'preferred_payment_method'
+        'preferred_payment_method',
+        'role'
     ];
 
     protected $hidden = [
@@ -34,5 +35,15 @@ class Customer extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function serviceOrders()
+    {
+        return $this->hasMany(\App\Models\ServiceOrder::class, 'customer_id')->orderBy('created_at', 'desc')->orderBy('scheduled_datetime', 'desc');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(\App\Models\RatingsReview::class, 'customer_id');
     }
 }

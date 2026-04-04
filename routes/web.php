@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,22 @@ Route::get('/how-it-works', function () {
 Route::get('/about', function () {
     return view('about');
 })->name('about');
+
+Route::get('/admin/dashboard', function () {
+    return view('admin.dashboard');
+});
+
+Route::get('/admin/service_providers', function () {
+    return view('admin.service_providers');
+});
+
+Route::get('/admin/all_bookings', function () {
+    return view('admin.all_booking');
+});
+
+Route::get('/payment', function () {
+    return view('payment');
+});
 
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
 
