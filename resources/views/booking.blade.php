@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order a Service - Serviqo</title>
     <script>
-        (function() {
+        (function () {
             if (!localStorage.getItem("token")) {
                 document.documentElement.style.display = 'none';
                 window.location.replace("/login");
             }
         })();
-        window.addEventListener("pageshow", function(e) {
+        window.addEventListener("pageshow", function (e) {
             if (e.persisted && !localStorage.getItem("token")) {
                 document.documentElement.style.display = 'none';
                 window.location.replace("/login");
@@ -101,7 +101,8 @@
 
                             <!-- Dynamic Sub-Service Selection -->
                             <div id="sub-service-container" class="md:col-span-2 hidden animate-fade-in">
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Select Specific Service</label>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">Select Specific
+                                    Service</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                                         <i class="fas fa-list-ul"></i>
@@ -110,7 +111,8 @@
                                         class="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition bg-white appearance-none">
                                         <!-- Options populated via JS -->
                                     </select>
-                                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+                                    <div
+                                        class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
                                         <i class="fas fa-chevron-down text-xs"></i>
                                     </div>
                                 </div>
@@ -144,7 +146,8 @@
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-2">Division</label>
                                 <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 pointer-events-none">
+                                    <span
+                                        class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 pointer-events-none">
                                         <i class="fas fa-map-marker-alt"></i>
                                     </span>
                                     <select name="city" id="divisionSelect" required
@@ -158,7 +161,8 @@
                                         <option value="Rajshahi">Rajshahi</option>
                                         <option value="Khulna">Khulna</option>
                                     </select>
-                                    <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
+                                    <div
+                                        class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
                                         <i class="fas fa-chevron-down text-xs"></i>
                                     </div>
                                 </div>
@@ -173,13 +177,15 @@
                                         <span id="regionLabel">Select Region</span>
                                         <i class="fas fa-chevron-down text-xs text-gray-400"></i>
                                     </button>
-                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 pointer-events-none">
+                                    <span
+                                        class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 pointer-events-none">
                                         <i class="fas fa-globe"></i>
                                     </span>
                                     <div id="regionMenu"
                                         class="hidden absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-xl max-h-60 overflow-y-auto">
                                         <div id="regionOptionsList" class="p-1">
-                                            <div class="px-4 py-2 text-gray-400 text-sm">Please select a division first</div>
+                                            <div class="px-4 py-2 text-gray-400 text-sm">Please select a division first
+                                            </div>
                                         </div>
                                     </div>
                                     <input type="hidden" name="region" id="regionInput" required>
@@ -229,9 +235,12 @@
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-bold text-gray-700 mb-4">Select Payment Method</label>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <label class="relative flex items-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-green-50 transition group peer-checked:border-green-500">
-                                        <input type="radio" name="payment_method" value="cash" checked class="peer hidden">
-                                        <div class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center peer-checked:border-green-500 peer-checked:bg-green-500 mr-3">
+                                    <label
+                                        class="relative flex items-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-green-50 transition group peer-checked:border-green-500">
+                                        <input type="radio" name="payment_method" value="cash" checked
+                                            class="peer hidden">
+                                        <div
+                                            class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center peer-checked:border-green-500 peer-checked:bg-green-500 mr-3">
                                             <div class="w-2 h-2 bg-white rounded-full"></div>
                                         </div>
                                         <div class="flex flex-col">
@@ -242,9 +251,12 @@
                                             class="fas fa-money-bill-wave ml-auto text-gray-400 group-hover:text-green-500"></i>
                                     </label>
 
-                                    <label class="relative flex items-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-green-50 transition group">
-                                        <input type="radio" name="payment_method" value="mobile_banking" class="peer hidden">
-                                        <div class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center peer-checked:border-green-500 peer-checked:bg-green-500 mr-3">
+                                    <label
+                                        class="relative flex items-center p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-green-50 transition group">
+                                        <input type="radio" name="payment_method" value="mobile_banking"
+                                            class="peer hidden">
+                                        <div
+                                            class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center peer-checked:border-green-500 peer-checked:bg-green-500 mr-3">
                                             <div class="w-2 h-2 bg-white rounded-full"></div>
                                         </div>
                                         <div class="flex flex-col">
@@ -278,10 +290,16 @@
             </div>
             <h3 class="text-2xl font-bold text-gray-900 mb-2">Order Confirmed</h3>
             <p class="text-gray-500 mb-8">Thanks for being with us.</p>
-            <button id="closeModal"
-                class="w-full py-3 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-all">
-                Great!
-            </button>
+            <div class="space-y-3">
+                <button id="closeModal"
+                    class="w-full py-3 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600">
+                    Go Home
+                </button>
+                <button id="payNowBtn"
+                    class="w-full py-3 bg-purple-500 text-white font-bold rounded-xl hover:bg-purple-600 hidden">
+                    Pay Now
+                </button>
+            </div>
         </div>
     </div>
 
@@ -291,7 +309,7 @@
             <p class="text-gray-400 text-sm">&copy; 2026 Serviqo. All rights reserved.</p>
         </div>
     </footer>
-    
+
     <script>
         async function protectPage() {
             const token = localStorage.getItem("token");
@@ -323,7 +341,7 @@
     </script>
     <script>
         // Auto-select service from URL parameter
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const mainSelect = document.getElementById('main-service-select');
             const subContainer = document.getElementById('sub-service-container');
             const subSelect = document.getElementById('sub-service-select');
@@ -464,7 +482,7 @@
             function updateSubServices(category, preselectedValue = null) {
                 const subs = subServicesData[category];
                 if (subs) {
-                    subSelect.innerHTML = subs.map(s => 
+                    subSelect.innerHTML = subs.map(s =>
                         `<option value="${s.value}" ${preselectedValue === s.value ? 'selected' : ''}>${s.label}</option>`
                     ).join('');
                     subContainer.classList.remove('hidden');
@@ -475,18 +493,18 @@
                 }
             }
 
-            mainSelect.addEventListener('change', function() {
+            mainSelect.addEventListener('change', function () {
                 updateSubServices(this.value);
             });
 
-            subSelect.addEventListener('change', function() {
+            subSelect.addEventListener('change', function () {
                 finalValueInput.value = this.value;
             });
 
             // Initial check from URL
             const urlParams = new URLSearchParams(window.location.search);
             let serviceParam = urlParams.get('service');
-            
+
             if (serviceParam) {
                 serviceParam = serviceParam.toLowerCase();
                 // Check if it's a sub-service
@@ -511,16 +529,23 @@
             const bookingForm = document.getElementById('bookingForm');
             const confirmationModal = document.getElementById('confirmationModal');
             const closeModal = document.getElementById('closeModal');
+            const payNowBtn = document.getElementById("payNowBtn");
+
+            if (payNowBtn) {
+                payNowBtn.addEventListener("click", function () {
+                    window.location.href = "/payment";
+                });
+            }
 
             bookingForm.addEventListener('submit', function (e) {
                 e.preventDefault();
 
                 const formData = new FormData(bookingForm);
                 const data = Object.fromEntries(formData.entries());
-                
+
                 // Combine address fields
                 data.address = `${data.house_no}, Road ${data.road_no}, ${data.region}, ${data.city}`;
-                
+
                 const token = localStorage.getItem("token");
 
                 fetch('/api/book', {
@@ -533,8 +558,19 @@
                 })
                     .then(response => response.json())
                     .then(result => {
+                        console.log(result);
                         if (result.success) {
+                            // Store booking info
+                            localStorage.setItem("order_id", result.booking_id);
+                            localStorage.setItem("amount", result.amount);
+                            localStorage.setItem("payment_method", data.payment_method);
+
                             confirmationModal.classList.remove('hidden');
+
+                            // Show Pay Now button if mobile banking
+                            if (data.payment_method === "mobile_banking") {
+                                document.getElementById("payNowBtn").classList.remove("hidden");
+                            }
                         } else {
                             alert('Error: ' + (result.message || 'Validation failed'));
                         }
@@ -547,7 +583,14 @@
 
             closeModal.addEventListener('click', function () {
                 confirmationModal.classList.add('hidden');
-                window.location.href = '/';
+
+                const method = localStorage.getItem("payment_method");
+
+                if (method === "mobile_banking") {
+                    window.location.href = "/payment";
+                } else {
+                    window.location.href = "/";
+                }
             });
         });
     </script>

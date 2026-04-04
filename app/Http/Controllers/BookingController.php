@@ -136,7 +136,8 @@ class BookingController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Order saved successfully',
-                'booking_id' => $order->id
+                'booking_id' => $order->id,
+                'amount' => $order->total_amount
             ]);
             
         } catch (\Illuminate\Validation\ValidationException $e) {

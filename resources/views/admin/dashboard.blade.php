@@ -74,14 +74,13 @@
 
                 if (res.status === 401) {
                     localStorage.removeItem("token");
-                    window.location.href = "/login";
+                    window.location.replace = "/login";
                     return;
                 }
 
                 const user = await res.json();
                 document.getElementById("welcomeMessage").textContent = `Welcome back, ${user.fname} ${user.lname}!`;
 
-                // Fetch counts for stats
                 const bookingsRes = await fetch("/api/admin/all_bookings", {
                     headers: { Authorization: "Bearer " + token }
                 });
