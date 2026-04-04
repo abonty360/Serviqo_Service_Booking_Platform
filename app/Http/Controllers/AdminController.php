@@ -147,7 +147,8 @@ class AdminController extends Controller
     public function assign_provider(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:assigned,not_assigned'
+            'status' => 'nullable|in:assigned,not_assigned',
+            'provider_id' => 'nullable|exists:service_providers,id'
         ]);
 
         $order = ServiceOrder::with('items.offering')->find($id);
@@ -155,7 +156,20 @@ class AdminController extends Controller
             return response()->json(['message' => 'Order not found'], 404);
         }
 
-        if ($request->status === 'assigned') {
+        if ($request->provider_id) {
+            $provider = ServiceProvider::find($request->provider_id);
+            
+            foreach ($order->items as $item) {
+                $subServiceId = $item->offering->sub_service_id;
+                $offering = ServiceProviderOffering::firstOrCreate(
+                    ['service_provider_id' => $provider->id, 'sub_service_id' => $subServiceId],
+                    ['price_charged' => $item->item_price]
+                );
+                $item->service_provider_offering_id = $offering->id;
+                $item->save();
+            }
+            $message = 'Provider assigned successfully';
+        } elseif ($request->status === 'assigned') {
             // Find or create System Provider
             $area = ServiceArea::firstOrCreate(
                 ['city_name' => 'Default City', 'area_name' => 'Default Area'],
@@ -185,10 +199,6 @@ class AdminController extends Controller
             }
             $message = 'Provider assigned successfully';
         } else {
-            // Since DB is NOT NULL, we "unassign" by keeping it as is or handle it via a specific flag if needed.
-            // But usually, 'Not Assigned' in this context means keeping it in a pending state or 
-            // re-assigning back to a 'System' placeholder if it was something else.
-            // For now, we'll just confirm the intent.
             $message = 'Provider status marked as Not Assigned';
         }
 

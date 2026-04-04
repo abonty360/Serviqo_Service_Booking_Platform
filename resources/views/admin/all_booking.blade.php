@@ -186,8 +186,8 @@
             }
         }
 
-        async function assignProvider(id, status) {
-            if (!status) return;
+        async function assignProvider(id, provider_id) {
+            if (!provider_id) return;
             try {
                 const res = await fetch(`/api/admin/bookings/${id}/assign`, {
                     method: 'PATCH',
@@ -195,11 +195,14 @@
                         'Authorization': 'Bearer ' + token,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ status })
+                    body: JSON.stringify({ 
+                        provider_id: provider_id,
+                        status: 'assigned'
+                    })
                 });
 
                 if (res.ok) {
-                    alert('Provider status updated!');
+                    alert('Provider assigned successfully!');
                     loadBookings();
                 } else {
                     alert('Failed to update provider status.');
@@ -214,6 +217,9 @@
             const historyBody = document.getElementById("historyTableBody");
             
             try {
+                // Fetch providers first to ensure the list is available for rendering
+                await fetchProviders();
+
                 const res = await fetch("/api/admin/all_bookings", {
                     headers: { Authorization: "Bearer " + token }
                 });
@@ -242,10 +248,17 @@
                 const customerName = b.customer ? `${b.customer.fname} ${b.customer.lname}` : 'Guest';
                 const location = b.customer ? `${b.customer.city}, ${b.customer.address || ''}` : 'N/A';
                 
-                // Determine if it's already assigned to someone other than a generic placeholder if needed
-                // For now, checking if a provider email matches 'provider@example.com' could be one way
-                const provider = b.items && b.items[0] && b.items[0].offering ? b.items[0].offering.provider : null;
-                const isAssigned = provider && provider.email === 'provider@example.com'; 
+                const currentProvider = b.items && b.items[0] && b.items[0].offering ? b.items[0].offering.provider : null;
+                const customerCity = b.customer ? b.customer.city : '';
+                
+                // Filter providers that match the customer's city
+                const matchingProviders = providersList.filter(p => p.city === customerCity);
+
+                let providerOptions = `<option value="">Select Provider</option>`;
+                matchingProviders.forEach(p => {
+                    const isSelected = currentProvider && currentProvider.id === p.id;
+                    providerOptions += `<option value="${p.id}" ${isSelected ? 'selected' : ''}>${p.full_name}</option>`;
+                });
 
                 const paymentMethod = b.payments && b.payments[0] ? b.payments[0].payment_method.toLowerCase() : '';
                 let paymentStatusText = b.payment_status;
@@ -285,8 +298,7 @@
                         <td class="px-4 py-4">
                             <div class="flex flex-col gap-1">
                                 <select onchange="assignProvider(${b.id}, this.value)" class="text-[11px] border rounded p-1 w-full bg-white outline-none focus:border-green-500">
-                                    <option value="not_assigned" ${!isAssigned ? 'selected' : ''}>Not Assigned</option>
-                                    <option value="assigned" ${isAssigned ? 'selected' : ''}>Assigned</option>
+                                    ${providerOptions}
                                 </select>
                             </div>
                         </td>
