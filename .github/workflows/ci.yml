@@ -2,7 +2,9 @@ name: Laravel CI
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - 25-docker-implementation
   pull_request:
 
 jobs:
