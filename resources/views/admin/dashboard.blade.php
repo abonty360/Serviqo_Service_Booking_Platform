@@ -25,7 +25,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Quick Stats -->
                 <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 flex flex-col items-center text-center">
                     <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-4">
@@ -43,15 +43,6 @@
                     <h3 class="text-gray-500 font-medium mb-1">Service Providers</h3>
                     <p class="text-3xl font-bold text-gray-900">...</p>
                     <a href="/admin/service_providers" class="mt-4 text-green-600 hover:text-green-700 text-sm font-bold">Manage &rarr;</a>
-                </div>
-
-                <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 flex flex-col items-center text-center">
-                    <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-4">
-                        <i class="fas fa-dollar-sign text-2xl"></i>
-                    </div>
-                    <h3 class="text-gray-500 font-medium mb-1">Revenue</h3>
-                    <p class="text-3xl font-bold text-gray-900">...</p>
-                    <p class="mt-4 text-gray-400 text-sm italic">This Month</p>
                 </div>
             </div>
         </div>
