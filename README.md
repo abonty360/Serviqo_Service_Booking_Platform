@@ -100,9 +100,9 @@ The primary goal of this project is to simplify service discovery, reduce manual
 
 #### Milestone 2: Core Booking System
 - Service category and listing management
-- Location-based filtering and search
 - Booking and scheduling system
 - Profile settings implementation
+- Admin Panel
 
 #### Milestone 3: Finalization & Enhancements
 - Rating and review system
