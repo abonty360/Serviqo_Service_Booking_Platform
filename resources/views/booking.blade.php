@@ -268,6 +268,24 @@
                                     </label>
                                 </div>
                             </div>
+                            <!-- Price Display -->
+                            <div class="md:col-span-2 bg-green-50 border border-green-100 rounded-2xl p-6 mb-2 hidden animate-fade-in" id="price-display-container">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white">
+                                            <i class="fas fa-tag"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-bold text-gray-700">Estimated Cost</h4>
+                                            <p class="text-xs text-gray-500">Includes all taxes and fees</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-2xl font-bold text-green-600">৳<span id="display-price">0.00</span></span>
+                                        <input type="hidden" name="amount" id="final-amount-input">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <button type="submit"
@@ -349,66 +367,66 @@
 
             const subServicesData = {
                 'cleaning': [
-                    { value: 'cleaning', label: 'All Cleaning Services' },
-                    { value: 'home cleaning', label: 'Home Cleaning' },
-                    { value: 'furniture & carpet cleaning', label: 'Furniture & Carpet Cleaning' },
-                    { value: 'kitchen cleaning', label: 'Kitchen Cleaning' },
-                    { value: 'washroom cleaning', label: 'Washroom Cleaning' }
+                    { value: 'cleaning', label: 'All Cleaning Services', price: 2000 },
+                    { value: 'home cleaning', label: 'Home Cleaning', price: 1500 },
+                    { value: 'furniture & carpet cleaning', label: 'Furniture & Carpet Cleaning', price: 1200 },
+                    { value: 'kitchen cleaning', label: 'Kitchen Cleaning', price: 1000 },
+                    { value: 'washroom cleaning', label: 'Washroom Cleaning', price: 500 }
                 ],
                 'repair': [
-                    { value: 'repair', label: 'All Appliance Repair' },
-                    { value: 'ac repair', label: 'AC Repair' },
-                    { value: 'tv repair', label: 'TV Repair' },
-                    { value: 'washing machine repair', label: 'Washing Machine Repair' },
-                    { value: 'oven repair', label: 'Oven Repair' }
+                    { value: 'repair', label: 'All Appliance Repair', price: 1500 },
+                    { value: 'ac repair', label: 'AC Repair', price: 2500 },
+                    { value: 'tv repair', label: 'TV Repair', price: 1200 },
+                    { value: 'washing machine repair', label: 'Washing Machine Repair', price: 1800 },
+                    { value: 'oven repair', label: 'Oven Repair', price: 1000 }
                 ],
                 'maintenance': [
-                    { value: 'maintenance', label: 'All Maintenance' },
-                    { value: 'plumbing', label: 'Plumbing' },
-                    { value: 'electrical repair', label: 'Electrical Repair' },
-                    { value: 'carpentry', label: 'Carpentry' }
+                    { value: 'maintenance', label: 'All Maintenance', price: 800 },
+                    { value: 'plumbing', label: 'Plumbing', price: 500 },
+                    { value: 'electrical repair', label: 'Electrical Repair', price: 600 },
+                    { value: 'carpentry', label: 'Carpentry', price: 700 }
                 ],
                 'beauty': [
-                    { value: 'beauty', label: 'All Beauty & Makeover' },
-                    { value: 'nail extension', label: 'Nail Extension' },
-                    { value: 'hair care', label: 'Hair Care' },
-                    { value: 'home makeover', label: 'Home Makeover Service' },
-                    { value: 'spa', label: 'Spa Service' }
+                    { value: 'beauty', label: 'All Beauty & Makeover', price: 1500 },
+                    { value: 'nail extension', label: 'Nail Extension', price: 800 },
+                    { value: 'hair care', label: 'Hair Care', price: 1200 },
+                    { value: 'home makeover', label: 'Home Makeover Service', price: 5000 },
+                    { value: 'spa', label: 'Spa Service', price: 2500 }
                 ],
                 'pest': [
-                    { value: 'pest', label: 'All Pest Control' },
-                    { value: 'premium pest control', label: 'Premium Pest Control' },
-                    { value: 'regular pest control', label: 'Regular Pest Control' }
+                    { value: 'pest', label: 'All Pest Control', price: 3000 },
+                    { value: 'premium pest control', label: 'Premium Pest Control', price: 5000 },
+                    { value: 'regular pest control', label: 'Regular Pest Control', price: 2500 }
                 ],
                 'painting': [
-                    { value: 'painting', label: 'All Painting' },
-                    { value: 'renovation', label: 'Renovation' },
-                    { value: 'renovation consultancy', label: 'Renovation Consultancy' },
-                    { value: 'building painting', label: 'Building Painting' },
-                    { value: 'room painting', label: 'Room Painting' }
+                    { value: 'painting', label: 'All Painting', price: 10000 },
+                    { value: 'renovation', label: 'Renovation', price: 50000 },
+                    { value: 'renovation consultancy', label: 'Renovation Consultancy', price: 2000 },
+                    { value: 'building painting', label: 'Building Painting', price: 30000 },
+                    { value: 'room painting', label: 'Room Painting', price: 5000 }
                 ],
                 'car': [
-                    { value: 'car', label: 'All Car Care' },
-                    { value: 'car polishing & detailing', label: 'Car Polishing & Detailing' },
-                    { value: 'regular car wash', label: 'Regular Car Wash' },
-                    { value: 'diagnosis & repair', label: 'Diagnosis & Repair' }
+                    { value: 'car', label: 'All Car Care', price: 1000 },
+                    { value: 'car polishing & detailing', label: 'Car Polishing & Detailing', price: 2500 },
+                    { value: 'regular car wash', label: 'Regular Car Wash', price: 500 },
+                    { value: 'diagnosis & repair', label: 'Diagnosis & Repair', price: 2000 }
                 ],
                 'travel': [
-                    { value: 'travel', label: 'All Trip & Travels' },
-                    { value: 'tourist bus rental', label: 'Tourist Bus Rental' },
-                    { value: 'tourist guide booking', label: 'Tourist Guide Booking' }
+                    { value: 'travel', label: 'All Trip & Travels', price: 5000 },
+                    { value: 'tourist bus rental', label: 'Tourist Bus Rental', price: 15000 },
+                    { value: 'tourist guide booking', label: 'Tourist Guide Booking', price: 2000 }
                 ],
                 'health': [
-                    { value: 'health', label: 'All Health & Care' },
-                    { value: 'nursing service', label: 'Nursing Service' },
-                    { value: 'caregiving', label: 'Caregiving' },
-                    { value: 'doctor consultance', label: 'Doctor Consultance' }
+                    { value: 'health', label: 'All Health & Care', price: 2000 },
+                    { value: 'nursing service', label: 'Nursing Service', price: 3000 },
+                    { value: 'caregiving', label: 'Caregiving', price: 2500 },
+                    { value: 'doctor consultance', label: 'Doctor Consultance', price: 1000 }
                 ],
                 'shifting': [
-                    { value: 'shifting', label: 'All House Shifting' },
-                    { value: 'house shifting service', label: 'House Shifting Service' },
-                    { value: 'commercial shifting service', label: 'Commercial Shifting Service' },
-                    { value: 'pickup & truck rental', label: 'Pickup & Truck Rental' }
+                    { value: 'shifting', label: 'All House Shifting', price: 10000 },
+                    { value: 'house shifting service', label: 'House Shifting Service', price: 15000 },
+                    { value: 'commercial shifting service', label: 'Commercial Shifting Service', price: 25000 },
+                    { value: 'pickup & truck rental', label: 'Pickup & Truck Rental', price: 5000 }
                 ]
             };
 
@@ -493,12 +511,34 @@
                 }
             }
 
+            function updatePriceDisplay() {
+                const category = mainSelect.value;
+                const subValue = subSelect.value;
+                const priceDisplay = document.getElementById('price-display-container');
+                const displayPrice = document.getElementById('display-price');
+                const finalAmountInput = document.getElementById('final-amount-input');
+
+                if (category && subServicesData[category]) {
+                    const selectedSub = subServicesData[category].find(s => s.value === subValue);
+                    if (selectedSub && selectedSub.price) {
+                        displayPrice.textContent = selectedSub.price.toFixed(2);
+                        finalAmountInput.value = selectedSub.price;
+                        priceDisplay.classList.remove('hidden');
+                        return;
+                    }
+                }
+                priceDisplay.classList.add('hidden');
+                finalAmountInput.value = '';
+            }
+
             mainSelect.addEventListener('change', function () {
                 updateSubServices(this.value);
+                updatePriceDisplay();
             });
 
             subSelect.addEventListener('change', function () {
                 finalValueInput.value = this.value;
+                updatePriceDisplay();
             });
 
             // Initial check from URL

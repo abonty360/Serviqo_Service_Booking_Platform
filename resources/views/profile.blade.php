@@ -123,7 +123,7 @@
                                     <h4 class="font-bold text-gray-900 capitalize group-hover:text-green-600 transition">${displayServiceName}</h4>
                                     <span class="text-xs font-bold px-2 py-1 ${statusColor} rounded-lg capitalize">${order.status}</span>
                                 </div>
-                                <p class="text-sm text-gray-500 mt-1">Scheduled for ${dateText} • Total: $${order.total_amount}</p>
+                                <p class="text-sm text-gray-500 mt-1">Scheduled for ${dateText} • Total: ৳${order.total_amount}</p>
                             </div>
                             <div class="self-center opacity-0 group-hover:opacity-100 transition">
                                 <i class="fas fa-chevron-right text-gray-300"></i>
@@ -193,7 +193,7 @@
             document.getElementById('detailsDate').textContent = dateText;
             document.getElementById('detailsOrderId').textContent = "#" + String(order.id).padStart(5, '0');
             document.getElementById('detailsPayment').textContent = order.payment_status;
-            document.getElementById('detailsTotal').textContent = "$" + order.total_amount;
+            document.getElementById('detailsTotal').textContent = "৳" + order.total_amount;
 
             document.getElementById('bookingDetailsModal').classList.remove('hidden');
         }
