@@ -66,6 +66,20 @@
                         </tbody>
                     </table>
                 </div>
+                <!-- Pagination -->
+                <div class="flex items-center justify-between px-8 py-6 border-t border-gray-100">
+                    <div class="text-sm text-gray-600">
+                        <span id="providerPageInfo">Page 1</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="previousProvidersPage()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition font-semibold text-sm">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <button onclick="nextProvidersPage()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-semibold text-sm">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -176,6 +190,9 @@
 
     <script>
         const token = localStorage.getItem("token");
+        const itemsPerPage = 5;
+        let allProviders = [];
+        let providerPage = 1;
 
         if (!token) {
             window.location.href = "/login";
@@ -393,53 +410,9 @@
             }
         });
 
-                const providers = await res.json();
-                const list = document.getElementById("providersList");
-
-                if (!providers || providers.length === 0) {
-                    list.innerHTML = `
-                        <tr>
-                            <td colspan="4" class="px-8 py-12 text-center text-gray-500 italic">
-                                No service providers found.
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-
-                let html = "";
-                providers.forEach(p => {
-                    html += `
-                        <tr class="hover:bg-gray-50/50 transition-colors">
-                            <td class="px-8 py-6">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold mr-4">
-                                        ${p.full_name ? p.full_name.charAt(0) : '?'}
-                                    </div>
-                                    <div>
-                                        <div class="text-sm font-bold text-gray-900">${p.full_name || 'Unnamed'}</div>
-                                        <div class="text-xs text-gray-400">NID: ${p.nid || 'N/A'}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-8 py-6">
-                                <div class="text-sm text-gray-700 font-medium">${p.email}</div>
-                                <div class="text-xs text-gray-400">${p.phone}</div>
-                            </td>
-                            <td class="px-8 py-6">
-                                <div class="text-sm text-gray-700 font-medium">${p.city}</div>
-                                <div class="text-xs text-gray-400">${p.service_area ? p.service_area.area_name : 'Unknown Area'}</div>
-                            </td>
-                            <td class="px-8 py-6 text-center">
-                                <div class="inline-flex items-center px-3 py-1 bg-yellow-50 text-yellow-700 rounded-full text-xs font-bold">
-                                    <i class="fas fa-star mr-1"></i> ${p.rating || '0.0'}
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                list.innerHTML = html;
+                allProviders = await res.json();
+                providerPage = 1;
+                displayProvidersPage();
 
             } catch (err) {
                 console.error("Error:", err);
@@ -452,6 +425,83 @@
                 `;
             }
         }
+
+        function displayProvidersPage() {
+            const start = (providerPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageProviders = allProviders.slice(start, end);
+            const list = document.getElementById("providersList");
+
+            if (!allProviders || allProviders.length === 0) {
+                list.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="px-8 py-12 text-center text-gray-500 italic">
+                            No service providers found.
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('providerPageInfo').textContent = 'Page 0 of 0';
+                return;
+            }
+
+            let html = "";
+            pageProviders.forEach(p => {
+                html += `
+                    <tr class="hover:bg-gray-50/50 transition-colors">
+                        <td class="px-8 py-6">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold mr-4">
+                                    ${p.full_name ? p.full_name.charAt(0) : '?'}
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-gray-900">${p.full_name || 'Unnamed'}</div>
+                                    <div class="text-xs text-gray-400">NID: ${p.nid || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <div class="text-sm text-gray-700 font-medium">${p.email}</div>
+                            <div class="text-xs text-gray-400">${p.phone}</div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <div class="text-sm text-gray-700 font-medium">${p.city}</div>
+                            <div class="text-xs text-gray-400">${p.service_area ? p.service_area.area_name : 'Unknown Area'}</div>
+                        </td>
+                        <td class="px-8 py-6 text-center">
+                            <div class="inline-flex items-center px-3 py-1 bg-yellow-50 text-yellow-700 rounded-full text-xs font-bold">
+                                <i class="fas fa-star mr-1"></i> ${p.rating || '0.0'}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            list.innerHTML = html;
+            document.getElementById('providerPageInfo').textContent = `Page ${providerPage} of ${Math.ceil(allProviders.length / itemsPerPage)}`;
+        }
+
+        function nextProvidersPage() {
+            const maxPage = Math.ceil(allProviders.length / itemsPerPage);
+            if (providerPage < maxPage) {
+                providerPage++;
+                displayProvidersPage();
+            }
+        }
+
+        function previousProvidersPage() {
+            if (providerPage > 1) {
+                providerPage--;
+                displayProvidersPage();
+            }
+        }
+
+        window.addEventListener("pageshow", function (event) {
+             if (event.persisted) {
+                 if (!localStorage.getItem("token")) {
+                     window.location.replace("/login");
+                 }
+             }
+         });
 
         loadProviders();
     </script>

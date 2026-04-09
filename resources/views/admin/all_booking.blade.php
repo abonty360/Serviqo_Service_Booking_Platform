@@ -33,6 +33,40 @@
             background: #10b981;
             border-radius: 10px;
         }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 
@@ -85,6 +119,20 @@
                         </tbody>
                     </table>
                 </div>
+                <!-- Pagination for Pending Bookings -->
+                <div class="flex items-center justify-between mt-6 pt-6 border-t border-gray-100">
+                    <div class="text-sm text-gray-600">
+                        <span id="pendingPageInfo">Page 1</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="previousPendingPage()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition font-semibold text-sm">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <button onclick="nextPendingPage()" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition font-semibold text-sm">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Completed & Others Section -->
@@ -115,6 +163,33 @@
                         </tbody>
                     </table>
                 </div>
+                <!-- Pagination for History -->
+                <div class="flex items-center justify-between mt-6 pt-6 border-t border-gray-100">
+                    <div class="text-sm text-gray-600">
+                        <span id="historyPageInfo">Page 1</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="previousHistoryPage()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition font-semibold text-sm">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <button onclick="nextHistoryPage()" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition font-semibold text-sm">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup Modal -->
+    <div class="modal-overlay" id="popupModal">
+        <div class="modal-content">
+            <h3 class="text-lg font-bold text-gray-900 mb-2" id="popupTitle">Message</h3>
+            <p class="text-gray-600 mb-6" id="popupMessage">This is a message</p>
+            <div class="flex justify-end gap-3" id="popupActions">
+                <button onclick="closePopup()" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition">
+                    OK
+                </button>
             </div>
         </div>
     </div>
@@ -122,10 +197,62 @@
     <script>
         const token = localStorage.getItem("token");
         let providersList = [];
+        const itemsPerPage = 5;
+        let allBookings = [];
+        let pendingPage = 1;
+        let historyPage = 1;
 
         if (!token) {
             window.location.href = "/login";
         }
+
+        // Popup function
+        function showPopup(title, message) {
+            document.getElementById('popupTitle').innerText = title;
+            document.getElementById('popupMessage').innerText = message;
+            document.getElementById('popupActions').innerHTML = `
+                <button onclick="closePopup()" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition">
+                    OK
+                </button>
+            `;
+            document.getElementById('popupModal').classList.add('active');
+        }
+
+        function showConfirmPopup(title, message, onConfirm) {
+            document.getElementById('popupTitle').innerText = title;
+            document.getElementById('popupMessage').innerText = message;
+            document.getElementById('popupActions').innerHTML = `
+                <button onclick="closePopup()" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold rounded-lg transition">
+                    Cancel
+                </button>
+                <button onclick="confirmAction()" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition">
+                    Confirm
+                </button>
+            `;
+            window.currentConfirmCallback = onConfirm;
+            document.getElementById('popupModal').classList.add('active');
+        }
+
+        function confirmAction() {
+            if (window.currentConfirmCallback) {
+                window.currentConfirmCallback();
+            }
+            closePopup();
+        }
+
+        function closePopup() {
+            document.getElementById('popupModal').classList.remove('active');
+            window.currentConfirmCallback = null;
+        }
+
+        // Close popup when clicking on overlay
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('popupModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closePopup();
+                }
+            });
+        });
 
         async function fetchProviders() {
             try {
@@ -139,51 +266,52 @@
         }
 
         async function updateBookingStatus(id, status) {
-            if (!confirm(`Are you sure you want to ${status === 'Order Confirmed' ? 'approve' : 'decline'} this booking?`)) return;
+            const action = status === 'Order Confirmed' ? 'approve' : 'decline';
+            showConfirmPopup('Confirm Action', `Are you sure you want to ${action} this booking?`, async function() {
+                try {
+                    const res = await fetch(`/api/admin/bookings/${id}/status`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': 'Bearer ' + token,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ status })
+                    });
 
-            try {
-                const res = await fetch(`/api/admin/bookings/${id}/status`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ status })
-                });
-
-                if (res.ok) {
-                    alert('Booking status updated!');
-                    loadBookings();
-                } else {
-                    alert('Failed to update status.');
+                    if (res.ok) {
+                        showPopup('Success', 'Booking status updated!');
+                        loadBookings();
+                    } else {
+                        showPopup('Error', 'Failed to update status.');
+                    }
+                } catch (err) {
+                    console.error(err);
                 }
-            } catch (err) {
-                console.error(err);
-            }
+            });
         }
 
         async function updatePaymentStatus(id, payment_status) {
-            if (!confirm(`Are you sure you want to mark this payment as ${payment_status}?`)) return;
+            showConfirmPopup('Confirm Payment', `Are you sure you want to mark this payment as ${payment_status}?`, async function() {
+                try {
+                    const res = await fetch(`/api/admin/bookings/${id}/payment-status`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': 'Bearer ' + token,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ payment_status })
+                    });
 
-            try {
-                const res = await fetch(`/api/admin/bookings/${id}/payment-status`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ payment_status })
-                });
-
-                if (res.ok) {
-                    alert('Payment status updated!');
-                    loadBookings();
-                } else {
-                    alert('Failed to update payment status.');
+                    if (res.ok) {
+                        showPopup('Success', 'Payment status updated!');
+                        loadBookings();
+                    } else {
+                        showPopup('Error', 'Failed to update payment status.');
+                    }
+                } catch (err) {
+                    console.error(err);
                 }
-            } catch (err) {
-                console.error(err);
-            }
+            });
         }
 
         async function assignProvider(id, provider_id) {
@@ -202,19 +330,77 @@
                 });
 
                 if (res.ok) {
-                    alert('Provider assigned successfully!');
+                    showPopup('Success', 'Provider assigned successfully!');
                     loadBookings();
                 } else {
-                    alert('Failed to update provider status.');
+                    showPopup('Error', 'Failed to update provider status.');
                 }
             } catch (err) {
                 console.error(err);
             }
         }
 
+        function displayPendingPage() {
+            const pending = allBookings.filter(b => b.status === 'Pending' || b.status === 'pending');
+            const start = (pendingPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageBookings = pending.slice(start, end);
+            
+            const pendingBody = document.getElementById("pendingTableBody");
+            pendingBody.innerHTML = pageBookings.length ? renderPending(pageBookings) : `<tr><td colspan="9" class="py-8 text-center text-gray-400">No pending bookings.</td></tr>`;
+            
+            document.getElementById('pendingPageInfo').textContent = `Page ${pendingPage} of ${Math.ceil(pending.length / itemsPerPage) || 1}`;
+        }
+
+        function displayHistoryPage() {
+            const history = allBookings.filter(b => b.status !== 'Pending' && b.status !== 'pending');
+            const start = (historyPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageBookings = history.slice(start, end);
+            
+            const historyBody = document.getElementById("historyTableBody");
+            historyBody.innerHTML = pageBookings.length ? renderHistory(pageBookings) : `<tr><td colspan="7" class="py-8 text-center text-gray-400">No booking history.</td></tr>`;
+            
+            document.getElementById('historyPageInfo').textContent = `Page ${historyPage} of ${Math.ceil(history.length / itemsPerPage) || 1}`;
+        }
+
+        function nextPendingPage() {
+            const pending = allBookings.filter(b => b.status === 'Pending' || b.status === 'pending');
+            const maxPage = Math.ceil(pending.length / itemsPerPage);
+            if (pendingPage < maxPage) {
+                pendingPage++;
+                displayPendingPage();
+            }
+        }
+
+        function previousPendingPage() {
+            if (pendingPage > 1) {
+                pendingPage--;
+                displayPendingPage();
+            }
+        }
+
+        function nextHistoryPage() {
+            const history = allBookings.filter(b => b.status !== 'Pending' && b.status !== 'pending');
+            const maxPage = Math.ceil(history.length / itemsPerPage);
+            if (historyPage < maxPage) {
+                historyPage++;
+                displayHistoryPage();
+            }
+        }
+
+        function previousHistoryPage() {
+            if (historyPage > 1) {
+                historyPage--;
+                displayHistoryPage();
+            }
+        }
+
         async function loadBookings() {
             const pendingBody = document.getElementById("pendingTableBody");
             const historyBody = document.getElementById("historyTableBody");
+            pendingPage = 1;
+            historyPage = 1;
             
             try {
                 // Fetch providers first to ensure the list is available for rendering
@@ -230,13 +416,9 @@
                     return;
                 }
 
-                const bookings = await res.json();
-
-                const pending = bookings.filter(b => b.status === 'Pending' || b.status === 'pending');
-                const history = bookings.filter(b => b.status !== 'Pending' && b.status !== 'pending');
-
-                pendingBody.innerHTML = pending.length ? renderPending(pending) : `<tr><td colspan="9" class="py-8 text-center text-gray-400">No pending bookings.</td></tr>`;
-                historyBody.innerHTML = history.length ? renderHistory(history) : `<tr><td colspan="7" class="py-8 text-center text-gray-400">No booking history.</td></tr>`;
+                allBookings = await res.json();
+                displayPendingPage();
+                displayHistoryPage();
 
             } catch (err) {
                 pendingBody.innerHTML = historyBody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-red-400">Error loading data.</td></tr>`;
