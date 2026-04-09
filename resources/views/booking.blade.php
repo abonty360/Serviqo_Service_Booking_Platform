@@ -142,80 +142,31 @@
                                 </div>
                             </div>
 
-                            <!-- Division -->
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Division</label>
-                                <div class="relative">
-                                    <span
-                                        class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 pointer-events-none">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                    </span>
-                                    <select name="city" id="divisionSelect" required
-                                        class="block w-full pl-11 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition appearance-none bg-white text-gray-700">
-                                        <option value="" disabled selected>Select Division</option>
-                                        <option value="Dhaka">Dhaka</option>
-                                        <option value="Chittagong">Chittagong</option>
-                                        <option value="Sylhet">Sylhet</option>
-                                        <option value="Barisal">Barisal</option>
-                                        <option value="Rangpur">Rangpur</option>
-                                        <option value="Rajshahi">Rajshahi</option>
-                                        <option value="Khulna">Khulna</option>
-                                    </select>
-                                    <div
-                                        class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
-                                        <i class="fas fa-chevron-down text-xs"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Region -->
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Region</label>
-                                <div class="relative dropdown-container" id="regionContainer">
-                                    <button type="button" id="regionButton"
-                                        class="w-full pl-11 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition bg-white text-gray-700 text-left flex items-center justify-between">
-                                        <span id="regionLabel">Select Region</span>
-                                        <i class="fas fa-chevron-down text-xs text-gray-400"></i>
+                            <!-- Real-Time Location Tracker -->
+                            <div class="md:col-span-2">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="block text-sm font-bold text-gray-700">Current Location</label>
+                                    <button type="button" id="getLocationBtn" 
+                                        class="text-xs font-semibold text-green-600 hover:text-green-700 flex items-center gap-1 transition">
+                                        <i class="fas fa-map-pin"></i> Get My Location
                                     </button>
-                                    <span
-                                        class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 pointer-events-none">
-                                        <i class="fas fa-globe"></i>
-                                    </span>
-                                    <div id="regionMenu"
-                                        class="hidden absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-xl max-h-60 overflow-y-auto">
-                                        <div id="regionOptionsList" class="p-1">
-                                            <div class="px-4 py-2 text-gray-400 text-sm">Please select a division first
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" name="region" id="regionInput" required>
                                 </div>
-                            </div>
-
-                            <!-- Road No -->
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Road No.</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
-                                        <i class="fas fa-road"></i>
+                                        <i class="fas fa-location-dot"></i>
                                     </span>
-                                    <input type="text" name="road_no" required
-                                        class="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
-                                        placeholder="Road No.">
+                                    <input type="text" id="locationDisplay" readonly
+                                        class="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 outline-none transition"
+                                        placeholder="Click 'Get My Location' to share your coordinates">
                                 </div>
-                            </div>
-
-                            <!-- House No -->
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">House No.</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
-                                        <i class="fas fa-home"></i>
-                                    </span>
-                                    <input type="text" name="house_no" required
-                                        class="block w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
-                                        placeholder="House No.">
+                                <div id="locationMap" class="mt-3 w-full h-64 border border-gray-200 rounded-xl overflow-hidden bg-gray-100 hidden">
+                                    <iframe id="mapFrame" width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
                                 </div>
+                                <p id="locationStatus" class="text-xs text-gray-500 mt-2"></p>
+                                <!-- Hidden inputs for coordinates -->
+                                <input type="hidden" name="latitude" id="latitude">
+                                <input type="hidden" name="longitude" id="longitude">
+                                <input type="hidden" name="accuracy" id="accuracy">
                             </div>
 
                             <!-- Phone -->
@@ -496,6 +447,143 @@
             }
 
             setupDropdown('regionButton', 'regionMenu', 'regionLabel', 'regionInput', 'region-option');
+
+            // Real-Time Location Tracker
+            const getLocationBtn = document.getElementById('getLocationBtn');
+            let locationWatchId = null;
+
+            function updateLocationMap(lat, lng) {
+                const mapFrame = document.getElementById('mapFrame');
+                const mapContainer = document.getElementById('locationMap');
+                mapFrame.src = `https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+                mapContainer.classList.remove('hidden');
+            }
+
+            function displayLocation(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const accuracy = Math.round(position.coords.accuracy);
+
+                // Store in hidden fields
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+                document.getElementById('accuracy').value = accuracy;
+
+                // Show loading status
+                document.getElementById('locationStatus').innerHTML = '<i class="fas fa-spinner fa-spin text-blue-500 mr-1"></i>Getting address details...';
+                document.getElementById('locationDisplay').value = 'Fetching location details...';
+
+                // Reverse geocoding using OpenStreetMap Nominatim API
+                const geocodeUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
+                
+                fetch(geocodeUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        const address = data.address || {};
+                        
+                        console.log('Full address data:', address);
+                        
+                        // Extract area name - try multiple field names
+                        let areaName = address.suburb || address.village || address.neighbourhood || address.hamlet || address.residential || 'Area';
+                        
+                        // Extract district name - try multiple field names
+                        let districtName = address.district || address.county || address.administrative || 'District';
+                        
+                        // Extract division/state name
+                        let divisionName = address.state || address.province || 'Division';
+                        
+                        console.log('Extracted:', { areaName, districtName, divisionName });
+                        
+                        // Auto-fill form fields
+                        const divisionSelect = document.getElementById('divisionSelect');
+                        const regionInput = document.getElementById('regionInput');
+                        const roadInput = document.querySelector('input[name="road_no"]');
+                        const houseInput = document.querySelector('input[name="house_no"]');
+                        
+                        // Set division
+                        if (divisionSelect && divisionName) {
+                            divisionSelect.value = divisionName;
+                            divisionSelect.dispatchEvent(new Event('change'));
+                        }
+                        
+                        // Set region/area after a short delay
+                        if (regionInput && areaName) {
+                            setTimeout(() => {
+                                regionInput.value = areaName;
+                                const regionLabel = document.getElementById('regionLabel');
+                                if (regionLabel) regionLabel.textContent = areaName;
+                            }, 300);
+                        }
+                        
+                        // Set road if available
+                        if (roadInput && address.road) {
+                            roadInput.value = address.road;
+                        }
+                        
+                        // Set house number if available
+                        if (houseInput && address.house_number) {
+                            houseInput.value = address.house_number;
+                        }
+                        
+                        // Build display text: Area, District, Division with latitude and accuracy
+                        const locationText = `${areaName}, ${districtName}, ${divisionName}\n${lat.toFixed(6)} (±${accuracy}m)`;
+                        
+                        document.getElementById('locationDisplay').value = locationText;
+                        document.getElementById('locationStatus').innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i>Location captured at ${new Date().toLocaleTimeString()}`;
+                        updateLocationMap(lat, lng);
+                    })
+                    .catch(error => {
+                        console.error('Geocoding error:', error);
+                        
+                        // Fallback display on error
+                        const coordinatesText = `${lat.toFixed(6)} (±${accuracy}m)`;
+                        document.getElementById('locationDisplay').value = coordinatesText;
+                        document.getElementById('locationStatus').innerHTML = `<i class="fas fa-info-circle text-blue-500 mr-1"></i>Location captured (address lookup unavailable)`;
+                        updateLocationMap(lat, lng);
+                    });
+            }
+
+            function handleLocationError(error) {
+                let errorMsg = 'Unable to get location';
+                if (error.code === 1) {
+                    errorMsg = 'Location permission denied. Please enable location services.';
+                } else if (error.code === 2) {
+                    errorMsg = 'Location information unavailable. Please try again.';
+                } else if (error.code === 3) {
+                    errorMsg = 'Location request timed out. Please try again.';
+                }
+                document.getElementById('locationStatus').innerHTML = `<i class="fas fa-exclamation-circle text-red-500 mr-1"></i>${errorMsg}`;
+            }
+
+            // Get Location Button Handler
+            getLocationBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if (!navigator.geolocation) {
+                    document.getElementById('locationStatus').innerHTML = '<i class="fas fa-exclamation-circle text-red-500 mr-1"></i>Geolocation not supported by your browser';
+                    return;
+                }
+
+                getLocationBtn.disabled = true;
+                getLocationBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Getting location...';
+                document.getElementById('locationStatus').innerHTML = '<i class="fas fa-clock text-blue-500 mr-1"></i>Locating you...';
+
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                };
+
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        displayLocation(position);
+                        getLocationBtn.disabled = false;
+                        getLocationBtn.innerHTML = '<i class="fas fa-map-pin mr-1"></i> Update Location';
+                    },
+                    handleLocationError,
+                    options
+                );
+            });
 
             function updateSubServices(category, preselectedValue = null) {
                 const subs = subServicesData[category];
