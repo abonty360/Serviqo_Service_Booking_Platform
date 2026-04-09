@@ -26,7 +26,7 @@ Route::middleware(['auth:api', 'prevent-back-history'])->group(function () {
     Route::put('/profile', [AuthController::class, 'updateProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Notifications
+  
     Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
     Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
     Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead']);
