@@ -606,7 +606,7 @@
                     <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                         <h3 class="font-bold text-gray-900 text-xl mb-6">Settings</h3>
                         <div class="space-y-3">
-                            <button
+                            <button onclick="togglePasswordModal('open')"
                                 class="w-full flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition group">
                                 <div class="flex items-center">
                                     <i class="fas fa-shield-alt w-8 text-green-500"></i>
@@ -821,14 +821,157 @@
             </div>
         </div>
 
-    </main>
+        <!-- Password Change Modal -->
+        <div id="passwordModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+            <div class="bg-white rounded-3xl w-full max-w-md shadow-xl my-8">
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white rounded-t-3xl z-10">
+                    <h2 class="text-2xl font-bold text-gray-900">Change Password</h2>
+                    <button onclick="togglePasswordModal('close')" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="p-8">
+                    <!-- Alerts -->
+                    <div id="passwordError" class="hidden mb-6 p-4 bg-red-50 text-red-600 rounded-xl text-sm font-medium border border-red-100"></div>
+                    <div id="passwordSuccess" class="hidden mb-6 p-4 bg-green-50 text-green-600 rounded-xl text-sm font-medium border border-green-100"></div>
 
-    <footer class="bg-white border-t border-gray-100 py-12">
-        <div class="container mx-auto px-6 text-center text-gray-500 text-sm">
-            <p>&copy; 2026 Serviqo. All rights reserved.</p>
+                    <form id="passwordForm" onsubmit="submitPasswordChange(event)" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Current Password</label>
+                            <input type="password" id="currentPassword" name="current_password" required 
+                                placeholder="Enter your current password"
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition shadow-sm bg-gray-50 focus:bg-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">New Password</label>
+                            <input type="password" id="newPassword" name="new_password" required 
+                                placeholder="Enter new password (min 8 characters)"
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition shadow-sm bg-gray-50 focus:bg-white">
+                            <p class="text-xs text-gray-500 mt-1">Password must be at least 8 characters long</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" name="new_password_confirmation" required 
+                                placeholder="Re-enter your new password"
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition shadow-sm bg-gray-50 focus:bg-white">
+                        </div>
+
+                        <div class="pt-6 border-t border-gray-100 flex justify-end space-x-4">
+                            <button type="button" onclick="togglePasswordModal('close')"
+                                class="px-6 py-3 border border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-sm hover:shadow transition flex items-center">
+                                Change Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-    </footer>
-    <script>
+
+        <script>
+        function togglePasswordModal(action) {
+            const modal = document.getElementById('passwordModal');
+            
+            if (action === 'open') {
+                // Reset form
+                document.getElementById('passwordForm').reset();
+                document.getElementById('passwordError').classList.add('hidden');
+                document.getElementById('passwordSuccess').classList.add('hidden');
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        async function submitPasswordChange(event) {
+            event.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('passwordError');
+            const successDiv = document.getElementById('passwordSuccess');
+            const submitBtn = document.querySelector('#passwordForm button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            // Validation
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                errorDiv.textContent = 'All fields are required.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                errorDiv.textContent = 'New password must be at least 8 characters long.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                errorDiv.textContent = 'New password and confirm password do not match.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            if (currentPassword === newPassword) {
+                errorDiv.textContent = 'New password must be different from current password.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            errorDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+                
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword,
+                        new_password_confirmation: confirmPassword
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    errorDiv.textContent = data.message || 'Failed to change password. Please try again.';
+                    errorDiv.classList.remove('hidden');
+                    return;
+                }
+                
+                successDiv.textContent = 'Password changed successfully!';
+                successDiv.classList.remove('hidden');
+                document.getElementById('passwordForm').reset();
+                
+                setTimeout(() => {
+                    togglePasswordModal('close');
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Password change error:', error);
+                errorDiv.textContent = 'An error occurred. Please try again.';
+                errorDiv.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        }
+
         window.addEventListener("pageshow", function () {
             const token = localStorage.getItem("token");
 
@@ -836,7 +979,7 @@
                 window.location.replace("/login");
             }
         });
-    </script>
+        </script>
 </body>
 
 </html>
