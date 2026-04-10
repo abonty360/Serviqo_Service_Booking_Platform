@@ -111,7 +111,7 @@ function renderNavbar() {
     
     container.innerHTML = `
         <div class="relative" id="notificationContainer">
-            <button id="notificationBell" class="p-2 text-gray-500 hover:text-green-600 relative transition">
+            <button id="notificationBell" class="p-2 text-gray-500 hover:text-green-600 relative transition ml-6">
                 <i class="fas fa-bell text-xl"></i>
                 <span id="notificationBadge" class="hidden absolute top-2 right-2 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">0</span>
             </button>
@@ -133,7 +133,7 @@ function renderNavbar() {
             </div>
         </div>
 
-        <a href="/profile" class="px-4 py-2 text-green-600 font-semibold hover:bg-green-50 rounded-lg transition">
+        <a href="/profile" class="px-4 py-2 text-green-600 font-semibold hover:bg-green-50 rounded-lg transition ml-6">
             <i class="fas fa-user-circle text-xl"></i>
         </a>
 

@@ -21,7 +21,7 @@ class AdminController extends Controller
 
     public function providers()
     {
-        $providers = ServiceProvider::with('serviceArea')->get();
+        $providers = ServiceProvider::where('full_name', '!=', 'System Provider')->with('serviceArea')->get();
         return response()->json($providers);
     }
 
@@ -172,62 +172,111 @@ class AdminController extends Controller
 
     public function assign_provider(Request $request, $id)
     {
-        $request->validate([
-            'status' => 'nullable|in:assigned,not_assigned',
-            'provider_id' => 'nullable|exists:service_providers,id'
-        ]);
+        try {
+            $request->validate([
+                'status' => 'nullable|string',
+                'provider_id' => 'nullable|exists:service_providers,id'
+            ]);
 
-        $order = ServiceOrder::with('items.offering')->find($id);
-        if (!$order) {
-            return response()->json(['message' => 'Order not found'], 404);
-        }
-
-        if ($request->provider_id) {
-            $provider = ServiceProvider::find($request->provider_id);
-            
-            foreach ($order->items as $item) {
-                $subServiceId = $item->offering->sub_service_id;
-                $offering = ServiceProviderOffering::firstOrCreate(
-                    ['service_provider_id' => $provider->id, 'sub_service_id' => $subServiceId],
-                    ['price_charged' => $item->item_price]
-                );
-                $item->service_provider_offering_id = $offering->id;
-                $item->save();
+            $order = ServiceOrder::with('items.offering')->find($id);
+            if (!$order) {
+                return response()->json(['message' => 'Order not found'], 404);
             }
-            $message = 'Provider assigned successfully';
-        } elseif ($request->status === 'assigned') {
-            // Find or create System Provider
-            $area = ServiceArea::firstOrCreate(
-                ['city_name' => 'Default City', 'area_name' => 'Default Area'],
-                ['postal_code' => '0000']
-            );
 
-            $provider = ServiceProvider::firstOrCreate(
-                ['email' => 'provider@example.com'],
-                [
-                    'full_name' => 'System Provider',
-                    'phone' => '00000000',
-                    'city' => 'Default City',
-                    'nid' => 'NID-SYSTEM',
-                    'service_area_id' => $area->id,
-                    'address' => 'System'
-                ]
-            );
+            if ($request->provider_id) {
+                $provider = ServiceProvider::find($request->provider_id);
+                
+                if (!$order->items || $order->items->isEmpty()) {
+                    return response()->json(['message' => 'No items found for this order'], 400);
+                }
 
-            foreach ($order->items as $item) {
-                $subServiceId = $item->offering->sub_service_id;
-                $offering = ServiceProviderOffering::firstOrCreate(
-                    ['service_provider_id' => $provider->id, 'sub_service_id' => $subServiceId],
-                    ['price_charged' => $item->item_price]
+                foreach ($order->items as $item) {
+                    if (!$item->offering) {
+                        \Illuminate\Support\Facades\Log::warning("Offering missing for order item ID: " . $item->id);
+                        continue; 
+                    }
+                    $subServiceId = $item->offering->sub_service_id;
+                    $offering = ServiceProviderOffering::firstOrCreate(
+                        ['service_provider_id' => $provider->id, 'sub_service_id' => $subServiceId],
+                        ['price_charged' => $item->item_price]
+                    );
+                    $item->service_provider_offering_id = $offering->id;
+                    $item->save();
+                }
+
+                // If admin explicitly sent a status update alongside provider assignment
+                if ($request->status) {
+                    $oldStatus = trim(strtolower($order->status));
+                    $newStatus = trim(strtolower($request->status));
+                    $order->status = $request->status;
+                    $order->save();
+
+                    if (($newStatus === 'confirmed' || $newStatus === 'approved' || $newStatus === 'order confirmed') && $oldStatus !== $newStatus) {
+                        // Create order confirmation
+                        $confirmation = new \App\Models\OrderConfirmation();
+                        $confirmation->service_order_id = $order->id;
+                        $confirmation->confirmation_status = 'confirmed';
+                        $confirmation->final_amount = $order->total_amount;
+                        $confirmation->confirmed_at = now();
+                        $confirmation->save();
+
+                        \App\Models\Notification::create([
+                            'customer_id' => $order->customer_id,
+                            'service_order_id' => $order->id,
+                            'title' => 'Order Confirmed',
+                            'message' => 'Your order #' . $order->id . ' has been approved and confirmed.',
+                            'is_read' => 0
+                        ]);
+                    }
+                }
+
+                $message = 'Provider assigned and order confirmed successfully';
+            } elseif ($request->status === 'assigned') {
+                // Find or create System Provider
+                $area = ServiceArea::firstOrCreate(
+                    ['city_name' => 'Default City', 'area_name' => 'Default Area'],
+                    ['postal_code' => '0000']
                 );
-                $item->service_provider_offering_id = $offering->id;
-                $item->save();
-            }
-            $message = 'Provider assigned successfully';
-        } else {
-            $message = 'Provider status marked as Not Assigned';
-        }
 
-        return response()->json(['message' => $message]);
+                $provider = ServiceProvider::firstOrCreate(
+                    ['email' => 'provider@example.com'],
+                    [
+                        'full_name' => 'System Provider',
+                        'phone' => '00000000',
+                        'city' => 'Default City',
+                        'nid' => 'NID-SYSTEM',
+                        'service_area_id' => $area->id,
+                        'address' => 'System'
+                    ]
+                );
+
+                foreach ($order->items as $item) {
+                    if (!$item->offering) continue;
+                    $subServiceId = $item->offering->sub_service_id;
+                    $offering = ServiceProviderOffering::firstOrCreate(
+                        ['service_provider_id' => $provider->id, 'sub_service_id' => $subServiceId],
+                        ['price_charged' => $item->item_price]
+                    );
+                    $item->service_provider_offering_id = $offering->id;
+                    $item->save();
+                }
+                
+                $order->status = 'assigned';
+                $order->save();
+                
+                $message = 'Provider assigned successfully';
+            } else {
+                if ($request->status) {
+                    $order->status = $request->status;
+                    $order->save();
+                }
+                $message = 'Provider status marked as Not Assigned';
+            }
+
+            return response()->json(['message' => $message]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Assign Provider Error: ' . $e->getMessage());
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 }

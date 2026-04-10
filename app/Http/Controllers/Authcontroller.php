@@ -119,53 +119,40 @@ class AuthController extends Controller
         }
     }
 
-    public function updateProfile(Request $request)
+    public function changePassword(Request $request)
     {
         try {
             $user = auth('api')->user();
 
             $request->validate([
-                'fname' => 'required|string|max:255',
-                'lname' => 'required|string|max:255',
-                'dob' => [
-                    'required',
-                    'date',
-                    'before_or_equal:' . Carbon::now()->subYears(18)->toDateString()
-                ],
-                'email' => [
-                    'required',
-                    'email',
-                    'unique:customers,email,' . $user->id,
-                    'regex:/^[^@]+@[^@]+\.(com|org|net|edu|co|io|gov)$/i'
-                ],
-                'phone' => [
-                    'required',
-                    'regex:/^(\+8801|01)[3-9][0-9]{8}$/'
-                ],
-                'address' => 'nullable|string',
-                'city' => 'required|in:Dhaka,Chittagong,Sylhet,Barisal,Rangpur,Rajshahi,Khulna',
-                'region' => 'required|string'
-            ], [
-                'email.regex' => 'Email must end with a valid domain',
-                'phone.regex' => 'Enter a valid Bangladesh phone number',
-                'dob.before_or_equal' => 'You must be at least 18 years old to use our service.'
+                'current_password' => 'required|string',
+                'new_password' => 'required|string|min:8|confirmed'
             ]);
 
+            // Verify current password
+            if (!Hash::check($request->current_password, $user->password)) {
+                return response()->json([
+                    "error" => true,
+                    "message" => "Current password is incorrect"
+                ], 422);
+            }
+
+            // Check if new password is the same as current password
+            if (Hash::check($request->new_password, $user->password)) {
+                return response()->json([
+                    "error" => true,
+                    "message" => "New password must be different from current password"
+                ], 422);
+            }
+
+            // Update password
             $user->update([
-                'fname' => $request->fname,
-                'lname' => $request->lname,
-                'dob' => $request->dob,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'address' => $request->address,
-                'city' => $request->city,
-                'region' => $request->region,
+                'password' => Hash::make($request->new_password)
             ]);
 
             return response()->json([
                 "error" => false,
-                "message" => "Profile updated successfully",
-                "customer" => $user
+                "message" => "Password changed successfully"
             ]);
         } catch (ValidationException $e) {
             return response()->json([
@@ -175,7 +162,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 "error" => true,
-                "message" => "Failed to update profile: " . $e->getMessage()
+                "message" => "Failed to change password: " . $e->getMessage()
             ], 500);
         }
     }
