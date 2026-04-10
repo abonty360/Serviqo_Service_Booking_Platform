@@ -463,8 +463,9 @@
                     throw new Error(result.message + debugMsg);
                 }
 
-                // Show success message in pop-up
-                showPopupMessage('Thank You!', 'Your review has been submitted successfully.', 'success');
+                console.log('Rating submitted successfully', result);
+
+                showPopupMessage('Thank You!', 'Thank you for your review', 'success');
 
                 // Close modals and refresh profile after 2 seconds
                 setTimeout(() => {
