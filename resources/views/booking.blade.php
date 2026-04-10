@@ -459,6 +459,20 @@
                 mapContainer.classList.remove('hidden');
             }
 
+             function displayLocation(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const accuracy = Math.round(position.coords.accuracy);
+
+    
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+                document.getElementById('accuracy').value = accuracy;
+
+                document.getElementById('locationStatus').innerHTML = '<i class="fas fa-spinner fa-spin text-blue-500 mr-1"></i>Getting address details...';
+                document.getElementById('locationDisplay').value = 'Fetching location details...';
+
+
             function updateSubServices(category, preselectedValue = null) {
                 const subs = subServicesData[category];
                 if (subs) {
