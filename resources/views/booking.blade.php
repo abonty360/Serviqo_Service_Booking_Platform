@@ -448,143 +448,6 @@
 
             setupDropdown('regionButton', 'regionMenu', 'regionLabel', 'regionInput', 'region-option');
 
-            // Real-Time Location Tracker
-            const getLocationBtn = document.getElementById('getLocationBtn');
-            let locationWatchId = null;
-
-            function updateLocationMap(lat, lng) {
-                const mapFrame = document.getElementById('mapFrame');
-                const mapContainer = document.getElementById('locationMap');
-                mapFrame.src = `https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
-                mapContainer.classList.remove('hidden');
-            }
-
-            function displayLocation(position) {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                const accuracy = Math.round(position.coords.accuracy);
-
-                // Store in hidden fields
-                document.getElementById('latitude').value = lat;
-                document.getElementById('longitude').value = lng;
-                document.getElementById('accuracy').value = accuracy;
-
-                // Show loading status
-                document.getElementById('locationStatus').innerHTML = '<i class="fas fa-spinner fa-spin text-blue-500 mr-1"></i>Getting address details...';
-                document.getElementById('locationDisplay').value = 'Fetching location details...';
-
-                // Reverse geocoding using OpenStreetMap Nominatim API
-                const geocodeUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
-                
-                fetch(geocodeUrl)
-                    .then(response => response.json())
-                    .then(data => {
-                        const address = data.address || {};
-                        
-                        console.log('Full address data:', address);
-                        
-                        // Extract area name - try multiple field names
-                        let areaName = address.suburb || address.village || address.neighbourhood || address.hamlet || address.residential || 'Area';
-                        
-                        // Extract district name - try multiple field names
-                        let districtName = address.district || address.county || address.administrative || 'District';
-                        
-                        // Extract division/state name
-                        let divisionName = address.state || address.province || 'Division';
-                        
-                        console.log('Extracted:', { areaName, districtName, divisionName });
-                        
-                        // Auto-fill form fields
-                        const divisionSelect = document.getElementById('divisionSelect');
-                        const regionInput = document.getElementById('regionInput');
-                        const roadInput = document.querySelector('input[name="road_no"]');
-                        const houseInput = document.querySelector('input[name="house_no"]');
-                        
-                        // Set division
-                        if (divisionSelect && divisionName) {
-                            divisionSelect.value = divisionName;
-                            divisionSelect.dispatchEvent(new Event('change'));
-                        }
-                        
-                        // Set region/area after a short delay
-                        if (regionInput && areaName) {
-                            setTimeout(() => {
-                                regionInput.value = areaName;
-                                const regionLabel = document.getElementById('regionLabel');
-                                if (regionLabel) regionLabel.textContent = areaName;
-                            }, 300);
-                        }
-                        
-                        // Set road if available
-                        if (roadInput && address.road) {
-                            roadInput.value = address.road;
-                        }
-                        
-                        // Set house number if available
-                        if (houseInput && address.house_number) {
-                            houseInput.value = address.house_number;
-                        }
-                        
-                        // Build display text: Area, District, Division with latitude and accuracy
-                        const locationText = `${areaName}, ${districtName}, ${divisionName}\n${lat.toFixed(6)} (±${accuracy}m)`;
-                        
-                        document.getElementById('locationDisplay').value = locationText;
-                        document.getElementById('locationStatus').innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i>Location captured at ${new Date().toLocaleTimeString()}`;
-                        updateLocationMap(lat, lng);
-                    })
-                    .catch(error => {
-                        console.error('Geocoding error:', error);
-                        
-                        // Fallback display on error
-                        const coordinatesText = `${lat.toFixed(6)} (±${accuracy}m)`;
-                        document.getElementById('locationDisplay').value = coordinatesText;
-                        document.getElementById('locationStatus').innerHTML = `<i class="fas fa-info-circle text-blue-500 mr-1"></i>Location captured (address lookup unavailable)`;
-                        updateLocationMap(lat, lng);
-                    });
-            }
-
-            function handleLocationError(error) {
-                let errorMsg = 'Unable to get location';
-                if (error.code === 1) {
-                    errorMsg = 'Location permission denied. Please enable location services.';
-                } else if (error.code === 2) {
-                    errorMsg = 'Location information unavailable. Please try again.';
-                } else if (error.code === 3) {
-                    errorMsg = 'Location request timed out. Please try again.';
-                }
-                document.getElementById('locationStatus').innerHTML = `<i class="fas fa-exclamation-circle text-red-500 mr-1"></i>${errorMsg}`;
-            }
-
-            // Get Location Button Handler
-            getLocationBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                if (!navigator.geolocation) {
-                    document.getElementById('locationStatus').innerHTML = '<i class="fas fa-exclamation-circle text-red-500 mr-1"></i>Geolocation not supported by your browser';
-                    return;
-                }
-
-                getLocationBtn.disabled = true;
-                getLocationBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Getting location...';
-                document.getElementById('locationStatus').innerHTML = '<i class="fas fa-clock text-blue-500 mr-1"></i>Locating you...';
-
-                const options = {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                };
-
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        displayLocation(position);
-                        getLocationBtn.disabled = false;
-                        getLocationBtn.innerHTML = '<i class="fas fa-map-pin mr-1"></i> Update Location';
-                    },
-                    handleLocationError,
-                    options
-                );
-            });
-
             function updateSubServices(category, preselectedValue = null) {
                 const subs = subServicesData[category];
                 if (subs) {
@@ -629,13 +492,11 @@
                 updatePriceDisplay();
             });
 
-            // Initial check from URL
             const urlParams = new URLSearchParams(window.location.search);
             let serviceParam = urlParams.get('service');
 
             if (serviceParam) {
                 serviceParam = serviceParam.toLowerCase();
-                // Check if it's a sub-service
                 let parentCategory = null;
                 for (const cat in subServicesData) {
                     if (subServicesData[cat].some(s => s.value === serviceParam)) {
@@ -671,7 +532,6 @@
                 const formData = new FormData(bookingForm);
                 const data = Object.fromEntries(formData.entries());
 
-                // Combine address fields
                 data.address = `${data.house_no}, Road ${data.road_no}, ${data.region}, ${data.city}`;
 
                 const token = localStorage.getItem("token");
@@ -688,14 +548,12 @@
                     .then(result => {
                         console.log(result);
                         if (result.success) {
-                            // Store booking info
                             localStorage.setItem("order_id", result.booking_id);
                             localStorage.setItem("amount", result.amount);
                             localStorage.setItem("payment_method", data.payment_method);
 
                             confirmationModal.classList.remove('hidden');
 
-                            // Show Pay Now button if mobile banking
                             if (data.payment_method === "mobile_banking") {
                                 document.getElementById("payNowBtn").classList.remove("hidden");
                             }
