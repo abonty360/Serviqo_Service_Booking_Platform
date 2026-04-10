@@ -448,6 +448,17 @@
 
             setupDropdown('regionButton', 'regionMenu', 'regionLabel', 'regionInput', 'region-option');
 
+             // Real-Time Location Tracker
+            const getLocationBtn = document.getElementById('getLocationBtn');
+            let locationWatchId = null;
+
+            function updateLocationMap(lat, lng) {
+                const mapFrame = document.getElementById('mapFrame');
+                const mapContainer = document.getElementById('locationMap');
+                mapFrame.src = `https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+                mapContainer.classList.remove('hidden');
+            }
+
             function updateSubServices(category, preselectedValue = null) {
                 const subs = subServicesData[category];
                 if (subs) {
