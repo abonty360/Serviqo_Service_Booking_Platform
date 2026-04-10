@@ -116,13 +116,39 @@ class AdminController extends Controller
             'status' => 'required|string'
         ]);
 
+        \Illuminate\Support\Facades\Log::info('Updating status for order ' . $id . '. New status: ' . $request->status);
+
         $order = ServiceOrder::find($id);
         if (!$order) {
             return response()->json(['message' => 'Order not found'], 404);
         }
 
+        $oldStatus = trim(strtolower($order->status));
+        $newStatus = trim(strtolower($request->status));
+        
         $order->status = $request->status;
         $order->save();
+
+        \Illuminate\Support\Facades\Log::info("Status Change Check: Old=[$oldStatus], New=[$newStatus]");
+
+        if (($newStatus === 'confirmed' || $newStatus === 'approved' || $newStatus === 'order confirmed') && $oldStatus !== $newStatus) {
+            // Create order confirmation
+            $confirmation = new \App\Models\OrderConfirmation();
+            $confirmation->service_order_id = $order->id;
+            $confirmation->confirmation_status = 'confirmed';
+            $confirmation->final_amount = $order->total_amount;
+            $confirmation->confirmed_at = now();
+            $confirmation->save();
+
+            \Illuminate\Support\Facades\Log::info('Creating notification for customer ' . $order->customer_id . ' for order ' . $order->id);
+            \App\Models\Notification::create([
+                'customer_id' => $order->customer_id,
+                'service_order_id' => $order->id,
+                'title' => 'Order Confirmed',
+                'message' => 'Your order #' . $order->id . ' has been approved and confirmed.',
+                'is_read' => 0
+            ]);
+        }
 
         return response()->json(['message' => 'Status updated successfully', 'order' => $order]);
     }
