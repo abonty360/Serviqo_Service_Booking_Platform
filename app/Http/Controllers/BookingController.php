@@ -24,7 +24,9 @@ class BookingController extends Controller
                 'payment_method' => 'required|string'
             ], [
                 'date.after_or_equal' => 'Past dates are invalid. Order will not be confirmed.',
-                'phone.regex' => 'Please provide a valid Bangladesh phone number.'
+                'phone.regex' => 'Please provide a valid Bangladesh phone number.',
+                'city' => 'required|string',
+                'region' => 'required|string'
             ]);
 
             $user = auth('api')->user() ?? auth()->user();
@@ -55,6 +57,8 @@ class BookingController extends Controller
             $order->status = 'Pending';
             $order->payment_status = 'unpaid';
             $order->scheduled_datetime = $scheduledDatetime;
+            $order->city_name = $request->city;
+            $order->area_name = $request->region;
             $order->save();
 
             $subService = SubService::where('service_name', 'like', "%{$request->service}%")->first();
