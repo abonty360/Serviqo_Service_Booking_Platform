@@ -11,15 +11,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      sqlserver:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        env:
-          SA_PASSWORD: "StrongPass!123"
-          ACCEPT_EULA: "Y"
-        ports:
-          - 1433:1433
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,7 +23,7 @@ jobs:
           echo "APP_DEBUG=true" >> .env
 
           echo "DB_CONNECTION=sqlsrv" >> .env
-          echo "DB_HOST=sqlserver" >> .env
+          echo "DB_HOST=mssql" >> .env
           echo "DB_PORT=1433" >> .env
           echo "DB_DATABASE=serviqo_s_df" >> .env
           echo "DB_USERNAME=sa" >> .env
@@ -45,7 +36,7 @@ jobs:
         run: docker compose up -d
 
       - name: Wait for services
-        run: sleep 20
+        run: sleep 35
 
       - name: Install dependencies
         run: docker compose exec -T app composer install
@@ -58,3 +49,6 @@ jobs:
 
       - name: Laravel sanity check
         run: docker compose exec -T app php artisan --version
+        
+      - name: Check DB connection
+        run: docker compose exec -T app php artisan tinker --execute="DB::connection()->getPdo(); echo 'DB OK';"
