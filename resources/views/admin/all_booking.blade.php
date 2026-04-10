@@ -260,6 +260,7 @@
                     headers: { Authorization: "Bearer " + token }
                 });
                 providersList = await res.json();
+                console.log('Providers loaded:', providersList.length, providersList);
             } catch (err) {
                 console.error("Error fetching providers:", err);
             }
@@ -445,13 +446,81 @@
                 const currentProvider = b.items && b.items[0] && b.items[0].offering ? b.items[0].offering.provider : null;
                 const customerCity = b.customer ? b.customer.city : '';
                 
-                // Filter providers that match the customer's city and exclude System Provider
-                const matchingProviders = providersList.filter(p => p.city === customerCity && p.full_name !== 'System Provider');
+                // Get all sub-service IDs required for this order
+                const requiredSubServiceIds = b.items 
+                    ? b.items.map(item => item.offering && item.offering.sub_service_id).filter(Boolean)
+                    : [];
+                
+                // Get unique sub-service IDs (remove duplicates)
+                const uniqueSubServiceIds = [...new Set(requiredSubServiceIds)];
+                
+                console.log(`========== ORDER ${b.id} ==========`);
+                console.log('Required Sub-Service IDs:', uniqueSubServiceIds);
+                console.log('Total Providers Available:', providersList.length);
+                
+                // Filter providers that:
+                // 1. Exclude System Provider
+                // 2. Have offerings for ALL required sub-services
+                const matchingProviders = providersList.filter(p => {
+                    console.log(`\n--- Checking Provider: ${p.full_name} ---`);
+                    console.log(`Offered Sub-Services:`, p.offered_sub_services);
+                    console.log(`Is System Provider: ${p.full_name === 'System Provider'}`);
+                    
+                    // System Provider check
+                    if (p.full_name === 'System Provider') {
+                        console.log('❌ System Provider - SKIPPED');
+                        return false;
+                    }
+                    
+                    // Check if provider has all required sub-services
+                    if (uniqueSubServiceIds.length === 0) {
+                        console.log('✓ No specific services required - INCLUDED');
+                        return true;
+                    }
+                    
+                    // Get provider's offered sub-services
+                    const offeredServices = p.offered_sub_services || [];
+                    console.log(`Offered Services Array:`, offeredServices);
+                    
+                    // Check if provider offers ALL required sub-services
+                    const hasAllServices = uniqueSubServiceIds.every(subServiceId => {
+                        const hasService = offeredServices.includes(subServiceId);
+                        console.log(`  - SubService ${subServiceId}: ${hasService ? '✓' : '❌'}`);
+                        return hasService;
+                    });
+                    
+                    console.log(`Final Result: ${hasAllServices ? '✓ INCLUDED' : '❌ SKIPPED'}`);
+                    return hasAllServices;
+                });
 
-                let providerOptions = `<option value="">Select Provider</option>`;
+                console.log(`\n========== RESULT: ${matchingProviders.length} matching providers ==========\n`);
+
+                // Sort providers by rating (highest first) and then by name
+                matchingProviders.sort((a, b) => {
+                    const ratingA = a.rating || 0;
+                    const ratingB = b.rating || 0;
+                    if (ratingB !== ratingA) {
+                        return ratingB - ratingA;
+                    }
+                    return (a.full_name || '').localeCompare(b.full_name || '');
+                });
+
+                // Build provider options
+                let providerOptions = `<option value="">Select Provider (${matchingProviders.length} available)</option>`;
+                
+                // Add providers to options
                 matchingProviders.forEach(p => {
                     const isSelected = currentProvider && currentProvider.id === p.id;
-                    providerOptions += `<option value="${p.id}" ${isSelected ? 'selected' : ''}>${p.full_name}</option>`;
+                    const ratingDisplay = p.rating ? ` ★${p.rating}` : '';
+                    const servicesCount = (p.offered_sub_services || []).length;
+                    const matchCount = uniqueSubServiceIds.filter(id => 
+                        (p.offered_sub_services || []).includes(id)
+                    ).length;
+                    
+                    // Show if provider offers all required services or just matches
+                    const serviceMatch = matchCount === uniqueSubServiceIds.length ? '✓' : '';
+                    
+                    providerOptions += `<option value="${p.id}" ${isSelected ? 'selected' : ''} title="Services: ${servicesCount}, Rating: ${p.rating || 'N/A'}">${p.full_name}${ratingDisplay} ${serviceMatch}</option>`;
                 });
 
                 const paymentMethod = b.payments && b.payments[0] ? b.payments[0].payment_method.toLowerCase() : '';

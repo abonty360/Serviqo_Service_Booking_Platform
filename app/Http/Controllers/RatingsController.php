@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RatingsReview;
 use App\Models\ServiceOrder;
+use App\Models\ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -72,11 +73,27 @@ class RatingsController extends Controller
                 'review_date' => now()->toDateString()
             ]);
 
+            // Update the provider's average rating
+            $provider = ServiceProvider::find($validated['service_provider_id']);
+            if ($provider) {
+                $averageRating = $provider->updateAverageRating();
+                \Log::info('Provider rating updated', [
+                    'provider_id' => $provider->id,
+                    'new_average_rating' => $averageRating,
+                    'updated_rating_field' => $provider->fresh()->rating
+                ]);
+            }
+
             return response()->json([
                 'message' => 'Rating submitted successfully',
-                'data' => $rating
+                'data' => $rating,
+                'provider_updated_rating' => $provider ? $provider->fresh()->rating : null
             ], 201);
         } catch (\Exception $e) {
+            \Log::error('Rating submission error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json([
                 'message' => 'Failed to submit rating: ' . $e->getMessage()
             ], 500);

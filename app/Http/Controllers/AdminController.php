@@ -21,7 +21,29 @@ class AdminController extends Controller
 
     public function providers()
     {
-        $providers = ServiceProvider::where('full_name', '!=', 'System Provider')->with('serviceArea')->get();
+        $providers = ServiceProvider::where('full_name', '!=', 'System Provider')
+            ->with(['serviceArea', 'ratings'])
+            ->get();
+        
+        // Add offered_sub_services to each provider
+        $providers = $providers->map(function($provider) {
+            $offerings = ServiceProviderOffering::where('service_provider_id', $provider->id)
+                ->pluck('sub_service_id')
+                ->toArray();
+            $provider->offered_sub_services = $offerings;
+            return $provider;
+        });
+        
+        \Log::info('Providers API Response:', [
+            'total_providers' => $providers->count(),
+            'sample_provider' => $providers->first() ? [
+                'id' => $providers->first()->id,
+                'name' => $providers->first()->full_name,
+                'city' => $providers->first()->city,
+                'offered_sub_services' => $providers->first()->offered_sub_services
+            ] : null
+        ]);
+        
         return response()->json($providers);
     }
 
@@ -178,7 +200,7 @@ class AdminController extends Controller
                 'provider_id' => 'nullable|exists:service_providers,id'
             ]);
 
-            $order = ServiceOrder::with('items.offering')->find($id);
+            $order = ServiceOrder::with('items.offering.subService')->find($id);
             if (!$order) {
                 return response()->json(['message' => 'Order not found'], 404);
             }
@@ -190,18 +212,58 @@ class AdminController extends Controller
                     return response()->json(['message' => 'No items found for this order'], 400);
                 }
 
+                // Get all sub-services required for this order
+                $requiredSubServices = [];
+                foreach ($order->items as $item) {
+                    if ($item->offering && $item->offering->sub_service_id) {
+                        $requiredSubServices[] = $item->offering->sub_service_id;
+                    }
+                }
+
+                // Get provider's current offerings
+                $providerOfferings = ServiceProviderOffering::where('service_provider_id', $provider->id)
+                    ->pluck('sub_service_id')
+                    ->toArray();
+
+                // Check which sub-services the provider doesn't have
+                $missingServices = array_diff($requiredSubServices, $providerOfferings);
+                
+                if (!empty($missingServices)) {
+                    \Illuminate\Support\Facades\Log::warning('Provider missing sub-services', [
+                        'provider_id' => $provider->id,
+                        'order_id' => $order->id,
+                        'missing_sub_service_ids' => $missingServices
+                    ]);
+                    
+                    return response()->json([
+                        'message' => 'Provider does not offer all required services for this order',
+                        'missing_services_count' => count($missingServices),
+                        'provider_id' => $provider->id
+                    ], 422);
+                }
+
+                // Assign the provider's existing offerings to the order items
                 foreach ($order->items as $item) {
                     if (!$item->offering) {
                         \Illuminate\Support\Facades\Log::warning("Offering missing for order item ID: " . $item->id);
                         continue; 
                     }
                     $subServiceId = $item->offering->sub_service_id;
-                    $offering = ServiceProviderOffering::firstOrCreate(
-                        ['service_provider_id' => $provider->id, 'sub_service_id' => $subServiceId],
-                        ['price_charged' => $item->item_price]
-                    );
-                    $item->service_provider_offering_id = $offering->id;
-                    $item->save();
+                    
+                    // Find the provider's existing offering for this sub-service
+                    $offering = ServiceProviderOffering::where('service_provider_id', $provider->id)
+                        ->where('sub_service_id', $subServiceId)
+                        ->first();
+                    
+                    if ($offering) {
+                        $item->service_provider_offering_id = $offering->id;
+                        $item->save();
+                    } else {
+                        \Illuminate\Support\Facades\Log::error('Provider offering not found', [
+                            'provider_id' => $provider->id,
+                            'sub_service_id' => $subServiceId
+                        ]);
+                    }
                 }
 
                 // If admin explicitly sent a status update alongside provider assignment

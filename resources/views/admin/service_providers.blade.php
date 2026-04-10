@@ -411,6 +411,8 @@
         });
 
                 allProviders = await res.json();
+                // Sort providers by latest first (newest created_at first)
+                allProviders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                 providerPage = 1;
                 displayProvidersPage();
 

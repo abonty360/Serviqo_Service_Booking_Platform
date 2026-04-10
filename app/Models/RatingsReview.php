@@ -18,4 +18,14 @@ class RatingsReview extends Model
     protected $casts = [
         'review_date' => 'date',
     ];
+
+    public function serviceProvider()
+    {
+        return $this->belongsTo(ServiceProvider::class, 'service_provider_id');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
+    }
 }
