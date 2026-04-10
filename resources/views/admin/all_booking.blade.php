@@ -266,6 +266,17 @@
         }
 
         async function updateBookingStatus(id, status) {
+            if (status === 'Order Confirmed') {
+                const booking = allBookings.find(b => b.id === id);
+                const provider = booking && booking.items && booking.items[0] && booking.items[0].offering 
+                                    ? booking.items[0].offering.provider : null;
+                
+                if (!provider || provider.full_name === 'System Provider') {
+                    showPopup('Assign Provider', 'Please assign a service provider before accepting this booking.');
+                    return;
+                }
+            }
+
             const action = status === 'Order Confirmed' ? 'approve' : 'decline';
             showConfirmPopup('Confirm Action', `Are you sure you want to ${action} this booking?`, async function() {
                 try {
@@ -333,7 +344,8 @@
                     showPopup('Success', 'Provider assigned successfully!');
                     loadBookings();
                 } else {
-                    showPopup('Error', 'Failed to update provider status.');
+                    const result = await res.json();
+                    showPopup('Error', result.message || 'Failed to update provider status.');
                 }
             } catch (err) {
                 console.error(err);
@@ -341,7 +353,7 @@
         }
 
         function displayPendingPage() {
-            const pending = allBookings.filter(b => b.status === 'Pending' || b.status === 'pending');
+            const pending = allBookings.filter(b => b.status === 'Pending' || b.status === 'pending' || b.status === 'assigned');
             const start = (pendingPage - 1) * itemsPerPage;
             const end = start + itemsPerPage;
             const pageBookings = pending.slice(start, end);
@@ -353,7 +365,7 @@
         }
 
         function displayHistoryPage() {
-            const history = allBookings.filter(b => b.status !== 'Pending' && b.status !== 'pending');
+            const history = allBookings.filter(b => b.status !== 'Pending' && b.status !== 'pending' && b.status !== 'assigned');
             const start = (historyPage - 1) * itemsPerPage;
             const end = start + itemsPerPage;
             const pageBookings = history.slice(start, end);
@@ -365,7 +377,7 @@
         }
 
         function nextPendingPage() {
-            const pending = allBookings.filter(b => b.status === 'Pending' || b.status === 'pending');
+            const pending = allBookings.filter(b => b.status === 'Pending' || b.status === 'pending' || b.status === 'assigned');
             const maxPage = Math.ceil(pending.length / itemsPerPage);
             if (pendingPage < maxPage) {
                 pendingPage++;
@@ -381,7 +393,7 @@
         }
 
         function nextHistoryPage() {
-            const history = allBookings.filter(b => b.status !== 'Pending' && b.status !== 'pending');
+            const history = allBookings.filter(b => b.status !== 'Pending' && b.status !== 'pending' && b.status !== 'assigned');
             const maxPage = Math.ceil(history.length / itemsPerPage);
             if (historyPage < maxPage) {
                 historyPage++;
@@ -433,8 +445,8 @@
                 const currentProvider = b.items && b.items[0] && b.items[0].offering ? b.items[0].offering.provider : null;
                 const customerCity = b.customer ? b.customer.city : '';
                 
-                // Filter providers that match the customer's city
-                const matchingProviders = providersList.filter(p => p.city === customerCity);
+                // Filter providers that match the customer's city and exclude System Provider
+                const matchingProviders = providersList.filter(p => p.city === customerCity && p.full_name !== 'System Provider');
 
                 let providerOptions = `<option value="">Select Provider</option>`;
                 matchingProviders.forEach(p => {
@@ -501,8 +513,9 @@
         function renderHistory(bookings) {
             return bookings.map(b => {
                 const customerName = b.customer ? `${b.customer.fname} ${b.customer.lname}` : 'Guest';
-                const provider = b.items && b.items[0] && b.items[0].offering && b.items[0].offering.provider 
-                                    ? b.items[0].offering.provider.full_name : null;
+                const providerObj = b.items && b.items[0] && b.items[0].offering && b.items[0].offering.provider 
+                                    ? b.items[0].offering.provider : null;
+                const provider = (providerObj && providerObj.full_name !== 'System Provider') ? providerObj.full_name : null;
                 
                 let statusClass = "bg-gray-100 text-gray-600";
                 if (b.status === 'Order Confirmed') statusClass = "bg-green-100 text-green-600";
