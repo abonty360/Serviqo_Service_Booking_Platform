@@ -556,6 +556,36 @@
                 }
                 document.getElementById('locationStatus').innerHTML = `<i class="fas fa-exclamation-circle text-red-500 mr-1"></i>${errorMsg}`;
             }
+
+            getLocationBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if (!navigator.geolocation) {
+                    document.getElementById('locationStatus').innerHTML = '<i class="fas fa-exclamation-circle text-red-500 mr-1"></i>Geolocation not supported by your browser';
+                    return;
+                }
+
+                getLocationBtn.disabled = true;
+                getLocationBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Getting location...';
+                document.getElementById('locationStatus').innerHTML = '<i class="fas fa-clock text-blue-500 mr-1"></i>Locating you...';
+
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                };
+
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        displayLocation(position);
+                        getLocationBtn.disabled = false;
+                        getLocationBtn.innerHTML = '<i class="fas fa-map-pin mr-1"></i> Update Location';
+                    },
+                    handleLocationError,
+                    options
+                );
+            });
+            
             function updateSubServices(category, preselectedValue = null) {
                 const subs = subServicesData[category];
                 if (subs) {
