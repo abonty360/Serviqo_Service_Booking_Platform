@@ -142,7 +142,6 @@
                                 </div>
                             </div>
 
-                            <!-- Real-Time Location Tracker -->
                             <div class="md:col-span-2">
                                 <div class="flex justify-between items-center mb-2">
                                     <label class="block text-sm font-bold text-gray-700">Current Location</label>
@@ -165,13 +164,13 @@
                                         allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
                                 </div>
                                 <p id="locationStatus" class="text-xs text-gray-500 mt-2"></p>
-                                <!-- Hidden inputs for coordinates -->
                                 <input type="hidden" name="latitude" id="latitude">
                                 <input type="hidden" name="longitude" id="longitude">
                                 <input type="hidden" name="accuracy" id="accuracy">
+                                <input type="hidden" name="city" id="cityInput">
+                                <input type="hidden" name="area" id="areaInput">
                             </div>
 
-                            <!-- Phone -->
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-bold text-gray-700 mb-2">Phone Number</label>
                                 <div class="relative">
@@ -184,7 +183,6 @@
                                 </div>
                             </div>
 
-                            <!-- Payment Method -->
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-bold text-gray-700 mb-4">Select Payment Method</label>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -221,7 +219,6 @@
                                     </label>
                                 </div>
                             </div>
-                            <!-- Price Display -->
                             <div class="md:col-span-2 bg-green-50 border border-green-100 rounded-2xl p-6 mb-2 hidden animate-fade-in"
                                 id="price-display-container">
                                 <div class="flex items-center justify-between">
@@ -254,7 +251,6 @@
         </div>
     </div>
 
-    <!-- Booking Confirmation Modal -->
     <div id="confirmationModal"
         class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50 px-4">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform transition-all">
@@ -277,7 +273,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="bg-gray-900 text-white py-12 mt-auto">
         <div class="container mx-auto px-6 text-center">
             <p class="text-gray-400 text-sm">&copy; 2026 Serviqo. All rights reserved.</p>
@@ -314,7 +309,6 @@
         protectPage();
     </script>
     <script>
-        // Auto-select service from URL parameter
         document.addEventListener('DOMContentLoaded', function () {
             const mainSelect = document.getElementById('main-service-select');
             const subContainer = document.getElementById('sub-service-container');
@@ -453,7 +447,6 @@
 
             setupDropdown('regionButton', 'regionMenu', 'regionLabel', 'regionInput', 'region-option');
 
-            // Real-Time Location Tracker
             const getLocationBtn = document.getElementById('getLocationBtn');
             let locationWatchId = null;
 
@@ -468,7 +461,6 @@
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
                 const accuracy = Math.round(position.coords.accuracy);
-
 
                 document.getElementById('latitude').value = lat;
                 document.getElementById('longitude').value = lng;
@@ -486,30 +478,27 @@
 
                         console.log('Full address data:', address);
 
-                        // Extract area name - try multiple field names
                         let areaName = address.suburb || address.village || address.neighbourhood || address.hamlet || address.residential || 'Area';
 
-                        // Extract district name - try multiple field names
                         let districtName = address.district || address.county || address.administrative || 'District';
 
-                        // Extract division/state name
                         let divisionName = address.state || address.province || 'Division';
+
+                        document.getElementById('cityInput').value = divisionName || '';
+                        document.getElementById('areaInput').value = areaName || '';
 
                         console.log('Extracted:', { areaName, districtName, divisionName });
 
-                        // Auto-fill form fields
                         const divisionSelect = document.getElementById('divisionSelect');
                         const regionInput = document.getElementById('regionInput');
                         const roadInput = document.querySelector('input[name="road_no"]');
                         const houseInput = document.querySelector('input[name="house_no"]');
 
-                        // Set division
                         if (divisionSelect && divisionName) {
                             divisionSelect.value = divisionName;
                             divisionSelect.dispatchEvent(new Event('change'));
                         }
 
-                        // Set region/area after a short delay
                         if (regionInput && areaName) {
                             setTimeout(() => {
                                 regionInput.value = areaName;
@@ -518,17 +507,14 @@
                             }, 300);
                         }
 
-                        // Set road if available
                         if (roadInput && address.road) {
                             roadInput.value = address.road;
                         }
 
-                        // Set house number if available
                         if (houseInput && address.house_number) {
                             houseInput.value = address.house_number;
                         }
 
-                        // Build display text: Area, District, Division with latitude and accuracy
                         const locationText = `${areaName}, ${districtName}, ${divisionName}\n${lat.toFixed(6)} (±${accuracy}m)`;
 
                         document.getElementById('locationDisplay').value = locationText;
@@ -538,14 +524,17 @@
                     .catch(error => {
                         console.error('Geocoding error:', error);
 
-                        // Fallback display on error
+                        document.getElementById('cityInput').value = '';
+                        document.getElementById('areaInput').value = '';
+
                         const coordinatesText = `${lat.toFixed(6)} (±${accuracy}m)`;
                         document.getElementById('locationDisplay').value = coordinatesText;
                         document.getElementById('locationStatus').innerHTML = `<i class="fas fa-info-circle text-blue-500 mr-1"></i>Location captured (address lookup unavailable)`;
                         updateLocationMap(lat, lng);
                     });
             }
-             function handleLocationError(error) {
+
+            function handleLocationError(error) {
                 let errorMsg = 'Unable to get location';
                 if (error.code === 1) {
                     errorMsg = 'Location permission denied. Please enable location services.';
@@ -557,9 +546,9 @@
                 document.getElementById('locationStatus').innerHTML = `<i class="fas fa-exclamation-circle text-red-500 mr-1"></i>${errorMsg}`;
             }
 
-            getLocationBtn.addEventListener('click', function(e) {
+            getLocationBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                
+
                 if (!navigator.geolocation) {
                     document.getElementById('locationStatus').innerHTML = '<i class="fas fa-exclamation-circle text-red-500 mr-1"></i>Geolocation not supported by your browser';
                     return;
@@ -576,7 +565,7 @@
                 };
 
                 navigator.geolocation.getCurrentPosition(
-                    function(position) {
+                    function (position) {
                         displayLocation(position);
                         getLocationBtn.disabled = false;
                         getLocationBtn.innerHTML = '<i class="fas fa-map-pin mr-1"></i> Update Location';
@@ -585,7 +574,7 @@
                     options
                 );
             });
-            
+
             function updateSubServices(category, preselectedValue = null) {
                 const subs = subServicesData[category];
                 if (subs) {
@@ -670,7 +659,7 @@
                 const formData = new FormData(bookingForm);
                 const data = Object.fromEntries(formData.entries());
 
-                data.address = `${data.house_no}, Road ${data.road_no}, ${data.region}, ${data.city}`;
+               data.address = document.getElementById('locationDisplay').value || 'N/A';
 
                 const token = localStorage.getItem("token");
 
