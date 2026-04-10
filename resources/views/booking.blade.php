@@ -545,6 +545,17 @@
                         updateLocationMap(lat, lng);
                     });
             }
+             function handleLocationError(error) {
+                let errorMsg = 'Unable to get location';
+                if (error.code === 1) {
+                    errorMsg = 'Location permission denied. Please enable location services.';
+                } else if (error.code === 2) {
+                    errorMsg = 'Location information unavailable. Please try again.';
+                } else if (error.code === 3) {
+                    errorMsg = 'Location request timed out. Please try again.';
+                }
+                document.getElementById('locationStatus').innerHTML = `<i class="fas fa-exclamation-circle text-red-500 mr-1"></i>${errorMsg}`;
+            }
             function updateSubServices(category, preselectedValue = null) {
                 const subs = subServicesData[category];
                 if (subs) {
