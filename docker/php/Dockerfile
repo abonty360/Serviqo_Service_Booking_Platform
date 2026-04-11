@@ -41,4 +41,15 @@ WORKDIR /var/www
 COPY . /var/www
 RUN composer install --no-dev --optimize-autoloader
 
+# Install Node
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
+# Install & build frontend
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npm run build
+
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]

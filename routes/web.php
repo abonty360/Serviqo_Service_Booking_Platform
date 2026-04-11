@@ -73,3 +73,12 @@ Route::get('/payment', function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
 
+Route::get('/test-db', function () {
+    try {
+        DB::connection()->getPdo();
+        return 'Database connection successful!';
+    } catch (\Exception $e) {
+        return 'Connection failed: ' . $e->getMessage();
+    }
+});
+
