@@ -166,4 +166,52 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    public function updateProfile(Request $request)
+    {
+        try {
+            $user = auth('api')->user();
+
+            $request->validate([
+                'fname' => 'nullable|string|max:255',
+                'lname' => 'nullable|string|max:255',
+                'email' => 'nullable|email|unique:customers,email,' . $user->id,
+                'phone' => ['nullable', 'regex:/^(\+88|92)?01[3-9]\d{8}$/'],
+                'address' => 'nullable|string',
+                'city' => 'nullable|in:Dhaka,Chittagong,Sylhet,Barisal,Rangpur,Rajshahi,Khulna',
+                'region' => 'nullable|string',
+                'preferred_payment_method' => 'nullable|string'
+            ]);
+
+            $updateData = [];
+            if ($request->has('fname')) $updateData['fname'] = $request->fname;
+            if ($request->has('lname')) $updateData['lname'] = $request->lname;
+            if ($request->has('email')) $updateData['email'] = $request->email;
+            if ($request->has('phone')) $updateData['phone'] = $request->phone;
+            if ($request->has('address')) $updateData['address'] = $request->address;
+            if ($request->has('city')) $updateData['city'] = $request->city;
+            if ($request->has('region')) $updateData['region'] = $request->region;
+            if ($request->has('preferred_payment_method')) $updateData['preferred_payment_method'] = $request->preferred_payment_method;
+
+            if (!empty($updateData)) {
+                $user->update($updateData);
+            }
+
+            return response()->json([
+                "error" => false,
+                "message" => "Profile updated successfully",
+                "user" => $user
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                "error" => true,
+                "errors" => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                "error" => true,
+                "message" => "Failed to update profile: " . $e->getMessage()
+            ], 500);
+        }
+    }
 }
