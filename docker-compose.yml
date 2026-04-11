@@ -12,39 +12,26 @@ services:
     tty: true
     depends_on:
       - mssql
-    environment:
-      DB_CONNECTION: sqlsrv
-      DB_HOST: mssql
-      DB_PORT: 1433
-      DB_DATABASE: serviqo_s_df
-      DB_USERNAME: sa
-      DB_PASSWORD: StrongPass!123
+    ports:
+     - "8000:8080"
     healthcheck:
       test: ["CMD-SHELL", "php -m | grep -q 'Core'"]
       interval: 10s
       timeout: 5s
       retries: 3
-
-  webserver:
-    image: nginx:latest
-    container_name: laravel_nginx
-    ports:
-      - "8000:80"
-    volumes:
-      - ./:/var/www
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - app
   
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       SA_PASSWORD: "StrongPass!123"
       ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "StrongPass!123"
     ports:
     - "1433:1433"
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "echo 'SELECT 1' | /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'StrongPass!123' || exit 1"]
+      test: ["CMD-SHELL", "echo 'SELECT 1' | /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'StrongPass!123' -C || exit 1"]
       interval: 15s
       timeout: 10s
       retries: 6

@@ -38,8 +38,7 @@ RUN docker-php-ext-enable sqlsrv pdo_sqlsrv || true
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
+COPY . /var/www
+RUN composer install --no-dev --optimize-autoloader
 
-COPY init-db.sh /init-db.sh
-RUN chmod +x /init-db.sh
-
-CMD ["/init-db.sh"]
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
