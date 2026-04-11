@@ -484,8 +484,10 @@
                     
                     // Check if provider offers ALL required sub-services
                     const hasAllServices = uniqueSubServiceIds.every(subServiceId => {
-                        const hasService = offeredServices.includes(subServiceId);
-                        console.log(`  - SubService ${subServiceId}: ${hasService ? '✓' : '❌'}`);
+                        const directMatch = p.sub_service_id && String(p.sub_service_id) === String(subServiceId);
+                        const arrayMatch = (p.offered_sub_services || []).some(offeredId => String(offeredId) === String(subServiceId));
+                        const hasService = directMatch || arrayMatch;
+                        console.log(`  - SubService ${subServiceId}: ${hasService ? '✓' : '❌'} (direct: ${directMatch}, array: ${arrayMatch})`);
                         return hasService;
                     });
                     
@@ -512,9 +514,10 @@
                 matchingProviders.forEach(p => {
                     const isSelected = currentProvider && currentProvider.id === p.id;
                     const ratingDisplay = p.rating ? ` ★${p.rating}` : '';
-                    const servicesCount = (p.offered_sub_services || []).length;
+                    const offeredArray = p.offered_sub_services || [];
+                    const servicesCount = p.sub_service_id ? 1 : offeredArray.length;
                     const matchCount = uniqueSubServiceIds.filter(id => 
-                        (p.offered_sub_services || []).includes(id)
+                        (p.sub_service_id && String(p.sub_service_id) === String(id)) || offeredArray.some(offeredId => String(offeredId) === String(id))
                     ).length;
                     
                     // Show if provider offers all required services or just matches

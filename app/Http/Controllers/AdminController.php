@@ -94,10 +94,12 @@ class AdminController extends Controller
                     );
                     $subService = SubService::firstOrCreate(
                         [
-                            'service_name' => $offering['service_name'],
-                            'category_id' => $category->id
+                            'service_name' => strtolower($offering['service_name'])
                         ],
-                        ['description' => '']
+                        [
+                            'category_id' => $category->id,
+                            'description' => ''
+                        ]
                     );
 
                     ServiceProviderOffering::create([
