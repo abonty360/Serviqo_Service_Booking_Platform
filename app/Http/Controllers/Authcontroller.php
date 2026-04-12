@@ -166,4 +166,51 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    public function updateProfile(Request $request)
+    {
+        try {
+            $user = auth('api')->user();
+
+            $request->validate([
+                'fname' => 'required|string|max:255',
+                'lname' => 'required|string|max:255',
+                'phone' => [
+                    'required',
+                    'regex:/^(\+8801|01)[3-9][0-9]{8}$/'
+                ],
+                'address' => 'nullable|string',
+                'city' => 'required|in:Dhaka,Chittagong,Sylhet,Barisal,Rangpur,Rajshahi,Khulna',
+                'region' => 'required|string'
+            ], [
+                'phone.regex' => 'Enter a valid Bangladesh phone number'
+            ]);
+
+            $user->update($request->only([
+                'fname',
+                'lname',
+                'phone',
+                'address',
+                'city',
+                'region'
+            ]));
+
+            return response()->json([
+                "error" => false,
+                "message" => "Profile updated successfully",
+                "customer" => $user
+            ]);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                "error" => true,
+                "errors" => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                "error" => true,
+                "message" => "Failed to update profile: " . $e->getMessage()
+            ], 500);
+        }
+    }
 }
