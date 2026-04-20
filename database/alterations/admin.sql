@@ -1,0 +1,2 @@
+ALTER TABLE customers
+ADD role NVARCHAR(50) NOT NULL DEFAULT 'user';
